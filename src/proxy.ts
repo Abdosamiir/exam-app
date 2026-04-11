@@ -11,6 +11,11 @@ export default async function proxy(request: NextRequest) {
   // User cannot access private routes without authentication
   // User cannot access auth routes if they are authenticated
 
+  if (pathname === "/") {
+    if (jwt) return NextResponse.redirect(new URL("/dashboard", request.nextUrl.origin));
+    return NextResponse.redirect(new URL("/login", request.nextUrl.origin));
+  }
+
   if (privateRoutes.has(pathname)) {
     if (jwt) return NextResponse.next();
 
