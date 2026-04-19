@@ -26,7 +26,7 @@ const features = [
   },
 ];
 
-const Reusable = () => {
+const AuthReusableSection = () => {
   return (
     <div className="relative flex flex-col justify-center w-1/2 min-h-screen overflow-hidden  select-none">
       {/* ── decorative blur blobs ── */}
@@ -71,4 +71,4 @@ const Reusable = () => {
   );
 };
 
-export default Reusable;
+export default AuthReusableSection;

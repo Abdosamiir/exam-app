@@ -10,10 +10,11 @@ import {
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { loginSchema, type LoginSchema } from "@/lib/schemas/auth.schema";
-import { Button } from "@/components/ui/button";
+} from "@/shared/components/ui/field";
+import { Input } from "@/shared/components/ui/input";
+
+import { Button } from "@/shared/components/ui/button";
+import { loginSchema, LoginSchema } from "../../schemas/auth.schema";
 
 const LoginForm = () => {
   const router = useRouter();

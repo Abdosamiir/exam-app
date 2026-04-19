@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Reusable from "@/app/_components/auth/Reusable";
+import AuthReusableSection from "@/features/auth/components/auth-resuable-section";
 
 export const metadata: Metadata = {
   title: "Exam App",
@@ -13,7 +13,7 @@ export default function AuthLayout({
 }) {
   return (
     <main className="flex min-h-screen items-center antialiased">
-      <Reusable />
+      <AuthReusableSection />
       <div className="flex flex-1 items-center justify-center">{children}</div>
     </main>
   );
