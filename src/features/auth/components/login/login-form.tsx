@@ -115,11 +115,8 @@ const LoginForm = () => {
 
       <Button
         disabled={isPending}
-        className=" capitalize text-white rounded-none p-4 "
-        style={{
-          background: "#155dfc",
-          cursor: isPending ? "not-allowed" : "pointer",
-        }}
+        className=" capitalize text-white bg-blue-600  rounded-none p-4 "
+      
       >
         {isPending ? "Logging in…" : "Log in"}
       </Button>
