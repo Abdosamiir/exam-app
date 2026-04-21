@@ -1,7 +1,7 @@
-import React from "react";
+import { redirect } from "next/navigation";
 
-const page = () => {
-  return <div className="text-4xl text-blue-700">hello</div>;
+const DashboardPage = () => {
+  redirect("/dashboard/diplomas");
 };
 
-export default page;
+export default DashboardPage;
