@@ -1,6 +1,10 @@
 import z from "zod";
 import { IUser } from "../../../features/auth/types/user";
-import { loginSchema } from "../schemas/auth.schema";
+import {
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "../schemas/auth.schema";
 
 // export interface ILoginFields {
 //   username: string;
@@ -20,3 +24,6 @@ export interface IUpdateProfileFields {
 }
 
 export type IUpdateProfileResponse = IUser;
+
+export type ForgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFields = z.infer<typeof resetPasswordSchema>;

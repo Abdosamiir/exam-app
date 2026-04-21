@@ -13,6 +13,7 @@ import {
 } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 
+import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { loginSchema, LoginSchema } from "../../schemas/auth.schema";
 
@@ -113,10 +114,18 @@ const LoginForm = () => {
         </p>
       )}
 
+      <div className="flex justify-end">
+        <Link
+          href="/forgot-password"
+          className="text-sm text-blue-600 underline-offset-4 hover:underline"
+        >
+          Forgot password?
+        </Link>
+      </div>
+
       <Button
         disabled={isPending}
         className=" capitalize text-white bg-blue-600  rounded-none p-4 "
-      
       >
         {isPending ? "Logging in…" : "Log in"}
       </Button>
