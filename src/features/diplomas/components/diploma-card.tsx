@@ -8,7 +8,7 @@ interface DiplomaCardProps {
 const DiplomaCard = ({ diploma }: DiplomaCardProps) => {
   return (
     <Link
-      href={`/dashboard/diplomas/${diploma.id}`}
+      href={`/diplomas/${diploma.id}`}
       className="group rounded-lg border bg-white p-5 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow"
     >
       {diploma.image && (

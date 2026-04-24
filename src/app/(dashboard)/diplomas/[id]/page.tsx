@@ -37,7 +37,7 @@ export default async function DiplomaExamsPage({
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
           <Link
-            href="/dashboard/diplomas"
+            href="/diplomas"
             className="text-sm text-blue-600 hover:underline underline-offset-4"
           >
             ← Diplomas

@@ -21,7 +21,9 @@ export default async function proxy(request: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
     if (!adminRoles.has(jwt.user?.role)) {
-      return NextResponse.redirect(new URL("/forbidden", request.nextUrl.origin));
+      return NextResponse.redirect(
+        new URL("/forbidden", request.nextUrl.origin),
+      );
     }
     return NextResponse.next();
   }
@@ -37,7 +39,8 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/") {
-    if (jwt) return NextResponse.redirect(new URL("/dashboard", request.nextUrl.origin));
+    if (jwt)
+      return NextResponse.redirect(new URL("/diplomas", request.nextUrl.origin));
     return NextResponse.redirect(new URL("/login", request.nextUrl.origin));
   }
 

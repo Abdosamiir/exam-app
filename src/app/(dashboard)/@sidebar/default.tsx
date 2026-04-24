@@ -7,13 +7,13 @@ const DashboardSidebar = () => {
         Dashboard
       </p>
       <Link
-        href="/dashboard/diplomas"
+        href="/diplomas"
         className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
       >
         Diplomas
       </Link>
       <Link
-        href="/dashboard/account"
+        href="/account"
         className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
       >
         Account Settings
