@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { USER_ROLES } from "@/features/auth/constants/user.constant";
 
-const privateRoutes = new Set(["/dashboard", "/dashboard/profile", "/profile"]);
+const dashboardPrefixes = ["/diplomas", "/account", "/exams"];
 const authRoutes = new Set(["/login", "/register"]);
 const adminRoles = new Set<string>([USER_ROLES.admin, USER_ROLES.superAdmin]);
 
@@ -29,7 +29,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Dashboard route protection
-  if (pathname.startsWith("/dashboard")) {
+  if (dashboardPrefixes.some((prefix) => pathname.startsWith(prefix))) {
     if (!jwt) {
       const redirectUrl = new URL("/login", request.nextUrl.origin);
       redirectUrl.searchParams.set("callbackUrl", pathname);
@@ -44,21 +44,10 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.nextUrl.origin));
   }
 
-  if (privateRoutes.has(pathname)) {
-    if (jwt) return NextResponse.next();
-
-    const redirectUrl = new URL("/login", request.nextUrl.origin);
-
-    redirectUrl.searchParams.set("callbackUrl", pathname);
-
-    return NextResponse.redirect(redirectUrl);
-  }
-
   if (authRoutes.has(pathname)) {
     if (!jwt) return NextResponse.next();
 
-    const redirectUrl = new URL("/dashboard", request.nextUrl.origin);
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(new URL("/diplomas", request.nextUrl.origin));
   }
 
   return NextResponse.next();

@@ -5,10 +5,14 @@ import { useExams } from "../../hooks/use-exams";
 import { IExam } from "../../types/exam";
 import DeleteExamButton from "./delete-exam-button";
 import EditExamForm from "./edit-exam-form";
+import { useRouter } from "next/navigation";
+// import Link from "next/link";
+// import { useRouter } from "next/router";
 
 const ExamsAdminTable = () => {
   const { data, isLoading, isError } = useExams();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -29,6 +33,8 @@ const ExamsAdminTable = () => {
   }
 
   const exams: IExam[] = data.payload?.data ?? [];
+  // console.log(exams);
+  // exam.id
 
   if (exams.length === 0) {
     return <p className="text-sm text-gray-500">No exams yet.</p>;
@@ -50,10 +56,21 @@ const ExamsAdminTable = () => {
           {exams.map((exam) => (
             <>
               <tr key={exam.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium max-w-xs truncate">{exam.title}</td>
-                <td className="px-4 py-3 text-gray-500">{exam.diploma.title}</td>
+                {/* <Link href={`exams/${exam.id}/questions`}> */}
+                <td
+                  className="px-4 py-3 font-medium max-w-xs truncate"
+                  onClick={() => router.push(`exams/${exam.id}/questions`)}
+                >
+                  {exam.title}
+                </td>
+                {/* </Link> */}
+                <td className="px-4 py-3 text-gray-500">
+                  {exam.diploma.title}
+                </td>
                 <td className="px-4 py-3 text-gray-500">{exam.duration} min</td>
-                <td className="px-4 py-3 text-gray-500">{exam.questionsCount}</td>
+                <td className="px-4 py-3 text-gray-500">
+                  {exam.questionsCount}
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <button

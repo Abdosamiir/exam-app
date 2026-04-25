@@ -1,0 +1,131 @@
+"use client";
+
+import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { useCreateQuestion } from "../../hooks/use-questions";
+import { ICreateQuestionFields } from "../../types/question";
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
+import { Input } from "@/shared/components/ui/input";
+import { Button } from "@/shared/components/ui/button";
+
+interface CreateQuestionFormProps {
+  examId: string;
+}
+
+const CreateQuestionForm = ({ examId }: CreateQuestionFormProps) => {
+  const [open, setOpen] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const form = useForm<ICreateQuestionFields>({
+    defaultValues: {
+      text: "",
+      examId,
+      answers: [{ text: "" }, { text: "" }],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "answers",
+  });
+
+  const { mutate, isPending } = useCreateQuestion();
+
+  const onSubmit = (data: ICreateQuestionFields) => {
+    setFormError(null);
+    mutate(data, {
+      onSuccess: (res) => {
+        if (!res.status) {
+          setFormError(res.message ?? "Failed to create question.");
+          return;
+        }
+        form.reset({ text: "", examId, answers: [{ text: "" }, { text: "" }] });
+        setOpen(false);
+      },
+      onError: () => setFormError("Something went wrong. Please try again."),
+    });
+  };
+
+  if (!open) {
+    return (
+      <Button className="bg-blue-600 text-white rounded-none" onClick={() => setOpen(true)}>
+        + New Question
+      </Button>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="flex flex-col gap-4 rounded-lg border bg-white p-5 shadow-sm"
+    >
+      <h2 className="text-lg font-semibold">New Question</h2>
+
+      <Field>
+        <FieldLabel htmlFor="q-text">Question</FieldLabel>
+        <Input
+          id="q-text"
+          placeholder="Enter question text"
+          {...form.register("text", { required: "Question text is required" })}
+          aria-invalid={!!form.formState.errors.text}
+        />
+        {form.formState.errors.text && (
+          <FieldError errors={[form.formState.errors.text]} />
+        )}
+      </Field>
+
+      <div className="flex flex-col gap-2">
+        <FieldLabel>Answers</FieldLabel>
+        {fields.map((field, index) => (
+          <div key={field.id} className="flex items-center gap-2">
+            <span className="text-xs font-medium text-gray-400 w-4">
+              {String.fromCharCode(65 + index)}.
+            </span>
+            <Input
+              placeholder={`Answer ${String.fromCharCode(65 + index)}`}
+              {...form.register(`answers.${index}.text`, {
+                required: "Answer text is required",
+              })}
+            />
+            {fields.length > 2 && (
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="text-xs text-red-500 hover:underline shrink-0"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => append({ text: "" })}
+          className="self-start text-xs text-blue-600 hover:underline"
+        >
+          + Add answer
+        </button>
+      </div>
+
+      {formError && (
+        <p role="alert" className="text-sm text-destructive">{formError}</p>
+      )}
+
+      <div className="flex gap-2">
+        <Button disabled={isPending} className="bg-blue-600 text-white rounded-none">
+          {isPending ? "Creating…" : "Create"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="rounded-none"
+          onClick={() => { setOpen(false); form.reset(); }}
+        >
+          Cancel
+        </Button>
+      </div>
+    </form>
+  );
+};
+
+export default CreateQuestionForm;

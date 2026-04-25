@@ -53,7 +53,7 @@ const LoginForm = () => {
       return result;
     },
     onSuccess: () => {
-      router.push("/dashboard");
+      router.push("/diplomas");
       router.refresh();
     },
   });

@@ -8,7 +8,7 @@ interface ExamCardProps {
 const ExamCard = ({ exam }: ExamCardProps) => {
   return (
     <Link
-      href={`/dashboard/exams/${exam.id}`}
+      href={`/exams/${exam.id}`}
       className="group rounded-lg border bg-white p-5 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow"
     >
       {exam.image && (
