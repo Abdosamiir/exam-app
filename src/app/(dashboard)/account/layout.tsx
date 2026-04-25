@@ -1,0 +1,14 @@
+export default function AccountLayout({
+  children,
+  accountsidebar,
+}: {
+  children: React.ReactNode;
+  accountsidebar: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-h-screen bg-gray-50">
+      {accountsidebar}
+      <main className="flex-1 p-6">{children}</main>
+    </div>
+  );
+}
