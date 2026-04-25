@@ -118,7 +118,7 @@ const ResetPasswordForm = () => {
         setFormError(null);
         mutate(data);
       })}
-      className="flex w-1/2 max-w-sm flex-col gap-6"
+      className="flex w-full px-4 md:px-0 md:w-1/2 max-w-sm flex-col gap-6"
     >
       <div className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-bold tracking-tight">Reset password</h1>

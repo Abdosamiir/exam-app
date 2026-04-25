@@ -48,13 +48,15 @@ const ForgotPasswordForm = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: data.email }),
-        }
+        },
       );
 
       const json = await response.json();
 
       if (!json.status) {
-        throw new Error(json.message || "Something went wrong. Please try again.");
+        throw new Error(
+          json.message || "Something went wrong. Please try again.",
+        );
       }
 
       return json;
@@ -70,11 +72,14 @@ const ForgotPasswordForm = () => {
 
   if (success) {
     return (
-      <div className="flex w-1/2 max-w-sm flex-col gap-6">
+      <div className="flex w-full px-4 md:px-0 md:w-1/2 max-w-sm flex-col gap-6">
         <div className="flex flex-col gap-1.5">
-          <h1 className="text-2xl font-bold tracking-tight">Check your inbox</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Check your inbox
+          </h1>
           <p className="text-sm text-muted-foreground">
-            A reset link has been sent to your email if it has an associated account.
+            A reset link has been sent to your email if it has an associated
+            account.
           </p>
         </div>
         <Link
@@ -93,7 +98,7 @@ const ForgotPasswordForm = () => {
         setFormError(null);
         mutate(data);
       })}
-      className="flex w-1/2 max-w-sm flex-col gap-6"
+      className="flex w-full px-4 md:px-0 md:w-1/2 max-w-sm flex-col gap-6"
     >
       <div className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-bold tracking-tight">Forgot password</h1>

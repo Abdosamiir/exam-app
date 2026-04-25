@@ -64,7 +64,7 @@ const LoginForm = () => {
   return (
     <form
       onSubmit={form.handleSubmit((data) => mutate(data))}
-      className="flex w-1/2 max-w-sm flex-col"
+      className="flex w-full px-4 md:px-0 md:w-1/2 max-w-sm flex-col"
     >
       <div className="flex flex-col gap-1.5 mb-8">
         <h1 className="text-2xl font-bold tracking-tight ">Login</h1>
