@@ -4,11 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useUpdateDiploma } from "../../hooks/use-diplomas";
 import { IDiploma, IUpdateDiplomaFields } from "../../types/diploma";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/shared/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 
@@ -24,7 +20,7 @@ const EditDiplomaForm = ({ diploma, onClose }: EditDiplomaFormProps) => {
     defaultValues: {
       title: diploma.title,
       description: diploma.description,
-      imageUrl: diploma.imageUrl ?? "",
+      image: diploma.image ?? "",
     },
   });
 
@@ -74,16 +70,18 @@ const EditDiplomaForm = ({ diploma, onClose }: EditDiplomaFormProps) => {
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="edit-imageUrl">Image URL</FieldLabel>
+        <FieldLabel htmlFor="edit-image">Image</FieldLabel>
         <Input
-          id="edit-imageUrl"
+          id="edit-image"
           placeholder="https://..."
-          {...form.register("imageUrl")}
+          {...form.register("image")}
         />
       </Field>
 
       {formError && (
-        <p role="alert" className="text-sm text-destructive">{formError}</p>
+        <p role="alert" className="text-sm text-destructive">
+          {formError}
+        </p>
       )}
 
       <div className="flex gap-2">
