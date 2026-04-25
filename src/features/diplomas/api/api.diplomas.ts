@@ -1,15 +1,15 @@
-import { IDiploma, IDiplomasPayload, ICreateDiplomaFields, IUpdateDiplomaFields } from "../types/diploma";
+import { API_BASE, authHeaders } from "@/shared/lib/utils/api.util";
+import {
+  IDiploma,
+  IDiplomasPayload,
+  ICreateDiplomaFields,
+  IUpdateDiplomaFields,
+} from "../types/diploma";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL;
-
-function authHeaders(token?: string): HeadersInit {
-  const headers: HeadersInit = { "Content-Type": "application/json" };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  return headers;
-}
-
-export async function getDiplomas(token?: string): Promise<IApiResponse<IDiplomasPayload>> {
-  const res = await fetch(`${BASE}/diplomas`, {
+export async function getDiplomas(
+  token?: string,
+): Promise<IApiResponse<IDiplomasPayload>> {
+  const res = await fetch(`${API_BASE}/diplomas`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -18,9 +18,9 @@ export async function getDiplomas(token?: string): Promise<IApiResponse<IDiploma
 
 export async function getDiplomaById(
   id: string,
-  token?: string
+  token?: string,
 ): Promise<IApiResponse<IDiploma>> {
-  const res = await fetch(`${BASE}/diplomas/${id}`, {
+  const res = await fetch(`${API_BASE}/diplomas/${id}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -29,9 +29,9 @@ export async function getDiplomaById(
 
 export async function createDiploma(
   data: ICreateDiplomaFields,
-  token: string
+  token: string,
 ): Promise<IApiResponse<IDiploma>> {
-  const res = await fetch(`${BASE}/diplomas`, {
+  const res = await fetch(`${API_BASE}/diplomas`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -42,9 +42,9 @@ export async function createDiploma(
 export async function updateDiploma(
   id: string,
   data: IUpdateDiplomaFields,
-  token: string
+  token: string,
 ): Promise<IApiResponse<IDiploma>> {
-  const res = await fetch(`${BASE}/diplomas/${id}`, {
+  const res = await fetch(`${API_BASE}/diplomas/${id}`, {
     method: "PUT",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -54,9 +54,9 @@ export async function updateDiploma(
 
 export async function deleteDiploma(
   id: string,
-  token: string
+  token: string,
 ): Promise<IApiResponse<null>> {
-  const res = await fetch(`${BASE}/diplomas/${id}`, {
+  const res = await fetch(`${API_BASE}/diplomas/${id}`, {
     method: "DELETE",
     headers: authHeaders(token),
   });

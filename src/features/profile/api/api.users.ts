@@ -1,22 +1,14 @@
+import { API_BASE, authHeaders } from "@/shared/lib/utils/api.util";
 import {
   IProfilePayload,
   IUpdateProfileFields,
   IChangePasswordFields,
 } from "../types/user";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL;
-
-function authHeaders(token: string): HeadersInit {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-}
-
 export async function getProfile(
   token: string
 ): Promise<IApiResponse<IProfilePayload>> {
-  const res = await fetch(`${BASE}/users/profile`, {
+  const res = await fetch(`${API_BASE}/users/profile`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -27,7 +19,7 @@ export async function updateProfile(
   data: IUpdateProfileFields,
   token: string
 ): Promise<IApiResponse<IProfilePayload>> {
-  const res = await fetch(`${BASE}/users/profile`, {
+  const res = await fetch(`${API_BASE}/users/profile`, {
     method: "PATCH",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -39,7 +31,7 @@ export async function changePassword(
   data: IChangePasswordFields,
   token: string
 ): Promise<IApiResponse<null>> {
-  const res = await fetch(`${BASE}/users/change-password`, {
+  const res = await fetch(`${API_BASE}/users/change-password`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -51,7 +43,7 @@ export async function requestEmailChange(
   newEmail: string,
   token: string
 ): Promise<IApiResponse<null>> {
-  const res = await fetch(`${BASE}/users/email/request`, {
+  const res = await fetch(`${API_BASE}/users/email/request`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify({ newEmail }),
@@ -63,7 +55,7 @@ export async function confirmEmailChange(
   code: string,
   token: string
 ): Promise<IApiResponse<null>> {
-  const res = await fetch(`${BASE}/users/email/confirm`, {
+  const res = await fetch(`${API_BASE}/users/email/confirm`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify({ code }),
@@ -74,7 +66,7 @@ export async function confirmEmailChange(
 export async function deleteAccount(
   token: string
 ): Promise<IApiResponse<null>> {
-  const res = await fetch(`${BASE}/users/account`, {
+  const res = await fetch(`${API_BASE}/users/account`, {
     method: "DELETE",
     headers: authHeaders(token),
   });

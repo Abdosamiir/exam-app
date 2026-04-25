@@ -1,3 +1,4 @@
+import { API_BASE, authHeaders } from "@/shared/lib/utils/api.util";
 import {
   IQuestionsPayload,
   IQuestionDetailPayload,
@@ -7,19 +8,11 @@ import {
   IQuestion,
 } from "../types/question";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL;
-
-function authHeaders(token?: string): HeadersInit {
-  const headers: HeadersInit = { "Content-Type": "application/json" };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  return headers;
-}
-
 export async function getQuestionsByExam(
   examId: string,
   token?: string
 ): Promise<IApiResponse<IQuestionsPayload>> {
-  const res = await fetch(`${BASE}/questions/exam/${examId}`, {
+  const res = await fetch(`${API_BASE}/questions/exam/${examId}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -30,7 +23,7 @@ export async function getQuestionById(
   id: string,
   token?: string
 ): Promise<IApiResponse<IQuestionDetailPayload>> {
-  const res = await fetch(`${BASE}/questions/${id}`, {
+  const res = await fetch(`${API_BASE}/questions/${id}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -41,7 +34,7 @@ export async function createQuestion(
   data: ICreateQuestionFields,
   token: string
 ): Promise<IApiResponse<IQuestion>> {
-  const res = await fetch(`${BASE}/questions`, {
+  const res = await fetch(`${API_BASE}/questions`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -54,7 +47,7 @@ export async function updateQuestion(
   data: IUpdateQuestionFields,
   token: string
 ): Promise<IApiResponse<IQuestion>> {
-  const res = await fetch(`${BASE}/questions/${id}`, {
+  const res = await fetch(`${API_BASE}/questions/${id}`, {
     method: "PUT",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -66,7 +59,7 @@ export async function deleteQuestion(
   id: string,
   token: string
 ): Promise<IApiResponse<null>> {
-  const res = await fetch(`${BASE}/questions/${id}`, {
+  const res = await fetch(`${API_BASE}/questions/${id}`, {
     method: "DELETE",
     headers: authHeaders(token),
   });
@@ -78,7 +71,7 @@ export async function bulkCreateQuestions(
   data: IBulkCreateQuestionsFields,
   token: string
 ): Promise<IApiResponse<IQuestionsPayload>> {
-  const res = await fetch(`${BASE}/questions/exam/${examId}/bulk`, {
+  const res = await fetch(`${API_BASE}/questions/exam/${examId}/bulk`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify(data),

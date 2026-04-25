@@ -1,3 +1,4 @@
+import { API_BASE, authHeaders } from "@/shared/lib/utils/api.util";
 import {
   IExam,
   IExamsPayload,
@@ -6,19 +7,11 @@ import {
   IUpdateExamFields,
 } from "../types/exam";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL;
-
-function authHeaders(token?: string): HeadersInit {
-  const headers: HeadersInit = { "Content-Type": "application/json" };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  return headers;
-}
-
 export async function getExams(
   params?: { diplomaId?: string; page?: number; limit?: number },
-  token?: string
+  token?: string,
 ): Promise<IApiResponse<IExamsPayload>> {
-  const url = new URL(`${BASE}/exams`);
+  const url = new URL(`${API_BASE}/exams`);
   if (params?.diplomaId) url.searchParams.set("diplomaId", params.diplomaId);
   if (params?.page) url.searchParams.set("page", String(params.page));
   if (params?.limit) url.searchParams.set("limit", String(params.limit));
@@ -32,9 +25,9 @@ export async function getExams(
 
 export async function createExam(
   data: ICreateExamFields,
-  token: string
+  token: string,
 ): Promise<IApiResponse<IExam>> {
-  const res = await fetch(`${BASE}/exams`, {
+  const res = await fetch(`${API_BASE}/exams`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -45,9 +38,9 @@ export async function createExam(
 export async function updateExam(
   id: string,
   data: IUpdateExamFields,
-  token: string
+  token: string,
 ): Promise<IApiResponse<IExam>> {
-  const res = await fetch(`${BASE}/exams/${id}`, {
+  const res = await fetch(`${API_BASE}/exams/${id}`, {
     method: "PUT",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -57,9 +50,9 @@ export async function updateExam(
 
 export async function deleteExam(
   id: string,
-  token: string
+  token: string,
 ): Promise<IApiResponse<null>> {
-  const res = await fetch(`${BASE}/exams/${id}`, {
+  const res = await fetch(`${API_BASE}/exams/${id}`, {
     method: "DELETE",
     headers: authHeaders(token),
   });
@@ -68,9 +61,9 @@ export async function deleteExam(
 
 export async function getExamById(
   id: string,
-  token?: string
+  token?: string,
 ): Promise<IApiResponse<IExamDetailPayload>> {
-  const res = await fetch(`${BASE}/exams/${id}`, {
+  const res = await fetch(`${API_BASE}/exams/${id}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
