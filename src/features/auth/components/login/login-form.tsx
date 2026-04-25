@@ -83,7 +83,7 @@ const LoginForm = () => {
                 aria-invalid={fieldState.invalid}
                 placeholder="Enter your username"
                 autoComplete="username"
-                className="p-5"
+                
               />
               <FieldDescription></FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -105,7 +105,7 @@ const LoginForm = () => {
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your password"
                   autoComplete="current-password"
-                  className="p-5 pr-11"
+                  className="pr-11"
                 />
                 <button
                   type="button"
