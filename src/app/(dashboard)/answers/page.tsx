@@ -27,18 +27,6 @@ const SubmissionRow = ({ submission }: { submission: ISubmission }) => {
         </p>
       </div>
       <div className="flex items-center gap-6 text-sm">
-        <div className="flex flex-col items-center gap-0.5">
-          <span className="text-green-600 font-semibold">
-            {submission.correct ?? "—"}
-          </span>
-          <span className="text-xs text-gray-400">Correct</span>
-        </div>
-        <div className="flex flex-col items-center gap-0.5">
-          <span className="text-red-500 font-semibold">
-            {submission.incorrect ?? "—"}
-          </span>
-          <span className="text-xs text-gray-400">Incorrect</span>
-        </div>
         <div className={`text-lg font-bold ${scoreColor}`}>
           {Math.round(score)}%
         </div>
