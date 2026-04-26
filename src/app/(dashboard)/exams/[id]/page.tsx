@@ -36,15 +36,10 @@ export default async function ExamQuestionsPage({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="flex flex-col gap-6 max-w-2xl mx-auto">
-        <Link
-          href={exam?.diplomaId ? `/diplomas/${exam.diplomaId}` : "/diplomas"}
-          className="self-start text-sm text-blue-600 hover:underline underline-offset-4"
-        >
-          ← Back to exams
-        </Link>
+       
 
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">{exam?.title ?? "Exam"}</h1>
+          {/* <h1 className="text-2xl font-bold">{exam?.title ?? "Exam"}</h1> */}
           {exam?.description && (
             <p className="text-sm text-gray-500">{exam.description}</p>
           )}

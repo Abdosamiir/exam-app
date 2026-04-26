@@ -16,7 +16,7 @@ export default async function DiplomasPage() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold">My Diplomas</h1>
+        {/* <h1 className="text-2xl font-bold">Diplomas</h1> */}
         <DiplomasList />
       </div>
     </HydrationBoundary>
