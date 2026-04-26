@@ -103,7 +103,7 @@ const ForgotPasswordForm = () => {
       <div className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-bold tracking-tight">Forgot password</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email and we&apos;ll send you a reset link.
+          Don’t worry, we will help you recover your account.
         </p>
       </div>
 
@@ -119,7 +119,7 @@ const ForgotPasswordForm = () => {
                 id={field.name}
                 type="email"
                 aria-invalid={fieldState.invalid}
-                placeholder="Enter your email"
+                placeholder="user@example.com"
                 autoComplete="email"
               />
               <FieldDescription></FieldDescription>
@@ -139,15 +139,15 @@ const ForgotPasswordForm = () => {
         disabled={isPending}
         className="capitalize text-white bg-blue-600 rounded-none p-4"
       >
-        {isPending ? "Sending…" : "Send reset link"}
+        {isPending ? "Sending…" : "Next"}
       </Button>
 
-      <Link
-        href="/login"
-        className="text-center text-sm text-blue-600 underline-offset-4 hover:underline"
-      >
-        Back to login
-      </Link>
+      <p className="text-center text-sm  underline-offset-4 hover:underline">
+        Don’t have an account?{" "}
+        <Link href="/register" className="text-blue-600">
+          Create yours
+        </Link>
+      </p>
     </form>
   );
 };

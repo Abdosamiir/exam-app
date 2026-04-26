@@ -26,6 +26,7 @@ const ResetPasswordForm = () => {
 
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<ResetPasswordSchema>({
     defaultValues: { newPassword: "", confirmPassword: "" },
@@ -59,13 +60,15 @@ const ResetPasswordForm = () => {
             newPassword: data.newPassword,
             confirmPassword: data.confirmPassword,
           }),
-        }
+        },
       );
 
       const json = await response.json();
 
       if (!json.status) {
-        throw new Error(json.message || "Something went wrong. Please try again.");
+        throw new Error(
+          json.message || "Something went wrong. Please try again.",
+        );
       }
 
       return json;
@@ -121,9 +124,11 @@ const ResetPasswordForm = () => {
       className="flex w-full px-4 md:px-0 md:w-1/2 max-w-sm flex-col gap-6"
     >
       <div className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-bold tracking-tight">Reset password</h1>
+        <h1 className="text-2xl font-bold tracking-tight capitalize">
+          Create new password
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Enter your new password below.
+          Create a new strong password for your account.
         </p>
       </div>
 
@@ -137,12 +142,20 @@ const ResetPasswordForm = () => {
               <Input
                 {...field}
                 id={field.name}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 aria-invalid={fieldState.invalid}
                 placeholder="Enter new password"
                 autoComplete="new-password"
               />
-              <FieldDescription></FieldDescription>
+              <FieldDescription>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? "Hide" : "Show"} password
+                </button>
+              </FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -157,12 +170,20 @@ const ResetPasswordForm = () => {
               <Input
                 {...field}
                 id={field.name}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 aria-invalid={fieldState.invalid}
                 placeholder="Confirm new password"
                 autoComplete="new-password"
               />
-              <FieldDescription></FieldDescription>
+              <FieldDescription>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? "Hide" : "Show"} password
+                </button>
+              </FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -174,13 +195,20 @@ const ResetPasswordForm = () => {
           {formError}
         </p>
       )}
-
-      <Button
-        disabled={isPending}
-        className="capitalize text-white bg-blue-600 rounded-none p-4"
-      >
-        {isPending ? "Resetting…" : "Reset password"}
-      </Button>
+      <div className="flex flex-col items-center justify-center gap-2">
+        <Button
+          disabled={isPending}
+          className="capitalize text-white bg-blue-600 w-full rounded-none p-4"
+        >
+          {isPending ? "Resetting…" : "Reset password"}
+        </Button>
+        <p className="text-center text-muted-foreground text-sm  underline-offset-4 hover:underline">
+          Don’t have an account?{" "}
+          <Link href="/register" className="text-blue-600">
+            Create yours
+          </Link>
+        </p>
+      </div>
     </form>
   );
 };
