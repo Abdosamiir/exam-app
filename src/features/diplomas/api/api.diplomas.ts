@@ -8,8 +8,10 @@ import {
 
 export async function getDiplomas(
   token?: string,
+  page: number = 1,
+  limit: number = 6,
 ): Promise<IApiResponse<IDiplomasPayload>> {
-  const res = await fetch(`${API_BASE}/diplomas`, {
+  const res = await fetch(`${API_BASE}/diplomas?page=${page}&limit=${limit}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });

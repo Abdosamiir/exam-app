@@ -1,22 +1,25 @@
 "use client";
 
-import { useDiplomas } from "../hooks/use-diplomas";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useInfiniteDiplomas } from "../hooks/use-diplomas";
 import DiplomaCard from "./diploma-card";
+import { IDiploma } from "../types/diploma";
+
+const SkeletonGrid = ({ count }: { count: number }) => (
+  <div className="grid grid-cols-3 gap-3 sm:gap-6">
+    {Array.from({ length: count }).map((_, i) => (
+      <div key={i} className="h-48 animate-pulse rounded-lg bg-gray-100" />
+    ))}
+  </div>
+);
 
 const DiplomasList = () => {
-  const { data, isLoading, isError } = useDiplomas();
+  const { data, isLoading, isError, fetchNextPage, hasNextPage } =
+    useInfiniteDiplomas();
 
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-48 animate-pulse rounded-lg bg-gray-100" />
-        ))}
-      </div>
-    );
-  }
+  if (isLoading) return <SkeletonGrid count={6} />;
 
-  if (isError || !data?.status) {
+  if (isError || !data) {
     return (
       <p className="text-sm text-destructive">
         Failed to load diplomas. Please try again.
@@ -24,18 +27,32 @@ const DiplomasList = () => {
     );
   }
 
-  const diplomas = data.payload?.data ?? [];
+  const diplomas: IDiploma[] = data.pages.flatMap((page) =>
+    page.status ? (page.payload?.data ?? []) : [],
+  );
 
   if (diplomas.length === 0) {
     return <p className="text-sm text-gray-500">No diplomas found.</p>;
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {diplomas.map((diploma) => (
-        <DiplomaCard key={diploma.id} diploma={diploma} />
-      ))}
-    </div>
+    <InfiniteScroll
+      dataLength={diplomas.length}
+      next={fetchNextPage}
+      hasMore={!!hasNextPage}
+      loader={<SkeletonGrid count={3} />}
+      endMessage={
+        <p className="mt-6 text-center text-sm text-gray-500">
+          <b>End of all diplomas</b>
+        </p>
+      }
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-3">
+        {diplomas.map((diploma) => (
+          <DiplomaCard key={diploma.id} diploma={diploma} />
+        ))}
+      </div>
+    </InfiniteScroll>
   );
 };
 

@@ -8,9 +8,11 @@ export default async function DiplomasPage() {
   const session = await getServerSession(authOptions);
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["diplomas"],
-    queryFn: () => getDiplomas(session?.accessToken),
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: ["diplomas", "infinite"],
+    queryFn: ({ pageParam }) =>
+      getDiplomas(session?.accessToken, pageParam as number, 6),
+    initialPageParam: 1,
   });
 
   return (

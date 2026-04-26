@@ -1,7 +1,12 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   getDiplomas,
   getDiplomaById,
@@ -10,6 +15,23 @@ import {
   deleteDiploma,
 } from "../api/api.diplomas";
 import { ICreateDiplomaFields, IUpdateDiplomaFields } from "../types/diploma";
+
+const PAGE_SIZE = 6;
+
+export function useInfiniteDiplomas() {
+  const { data: session } = useSession();
+  return useInfiniteQuery({
+    queryKey: ["diplomas", "infinite"],
+    queryFn: ({ pageParam }) =>
+      getDiplomas(session?.accessToken, pageParam as number, PAGE_SIZE),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const meta = "payload" in lastPage ? lastPage.payload?.metadata : undefined;
+      if (!meta) return undefined;
+      return meta.page < meta.totalPages ? meta.page + 1 : undefined;
+    },
+  });
+}
 
 export function useDiplomas() {
   const { data: session } = useSession();
