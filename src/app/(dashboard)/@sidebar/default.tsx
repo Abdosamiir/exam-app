@@ -12,6 +12,7 @@ import {
   SidebarHeader,
 } from "@/shared/components/ui/sidebar";
 import { SidebarNav } from "./_components/sidebar-nav";
+import { SidebarUserMenu } from "./_components/sidebar-user-menu";
 
 const DashboardSidebar = async () => {
   const session = await getServerSession(authOptions);
@@ -60,6 +61,7 @@ const DashboardSidebar = async () => {
                 {user.email}
               </span>
             </div>
+            <SidebarUserMenu role={user.role} />
           </div>
         </SidebarFooter>
       )}
