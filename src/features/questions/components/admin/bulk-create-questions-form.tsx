@@ -19,7 +19,7 @@ const BulkCreateQuestionsForm = ({ examId }: BulkCreateQuestionsFormProps) => {
   const form = useForm<IBulkCreateQuestionsFields>({
     defaultValues: {
       questions: [
-        { text: "", answers: [{ text: "" }, { text: "" }] },
+        { text: "", answers: [{ text: "", isCorrect: false }, { text: "", isCorrect: false }] },
       ],
     },
   });
@@ -93,7 +93,7 @@ const BulkCreateQuestionsForm = ({ examId }: BulkCreateQuestionsFormProps) => {
       <button
         type="button"
         onClick={() =>
-          appendQuestion({ text: "", answers: [{ text: "" }, { text: "" }] })
+          appendQuestion({ text: "", answers: [{ text: "", isCorrect: false }, { text: "", isCorrect: false }] })
         }
         className="self-start text-sm text-blue-600 hover:underline"
       >
@@ -148,6 +148,14 @@ function AnswerFields({
               required: "Answer text is required",
             })}
           />
+          <label className="flex items-center gap-1 text-xs text-gray-600 shrink-0 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              {...register(`questions.${qIndex}.answers.${aIndex}.isCorrect`)}
+              className="h-3.5 w-3.5 accent-blue-600"
+            />
+            Correct
+          </label>
           {fields.length > 2 && (
             <button
               type="button"
@@ -161,7 +169,7 @@ function AnswerFields({
       ))}
       <button
         type="button"
-        onClick={() => append({ text: "" })}
+        onClick={() => append({ text: "", isCorrect: false })}
         className="self-start text-xs text-blue-600 hover:underline"
       >
         + Add answer

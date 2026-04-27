@@ -20,7 +20,10 @@ const CreateQuestionForm = ({ examId }: CreateQuestionFormProps) => {
     defaultValues: {
       text: "",
       examId,
-      answers: [{ text: "" }, { text: "" }],
+      answers: [
+        { text: "", isCorrect: false },
+        { text: "", isCorrect: false },
+      ],
     },
   });
 
@@ -39,7 +42,7 @@ const CreateQuestionForm = ({ examId }: CreateQuestionFormProps) => {
           setFormError(res.message ?? "Failed to create question.");
           return;
         }
-        form.reset({ text: "", examId, answers: [{ text: "" }, { text: "" }] });
+        form.reset({ text: "", examId, answers: [{ text: "", isCorrect: false }, { text: "", isCorrect: false }] });
         setOpen(false);
       },
       onError: () => setFormError("Something went wrong. Please try again."),
@@ -87,6 +90,14 @@ const CreateQuestionForm = ({ examId }: CreateQuestionFormProps) => {
                 required: "Answer text is required",
               })}
             />
+            <label className="flex items-center gap-1 text-xs text-gray-600 shrink-0 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                {...form.register(`answers.${index}.isCorrect`)}
+                className="h-3.5 w-3.5 accent-blue-600"
+              />
+              Correct
+            </label>
             {fields.length > 2 && (
               <button
                 type="button"
@@ -100,7 +111,7 @@ const CreateQuestionForm = ({ examId }: CreateQuestionFormProps) => {
         ))}
         <button
           type="button"
-          onClick={() => append({ text: "" })}
+          onClick={() => append({ text: "", isCorrect: false })}
           className="self-start text-xs text-blue-600 hover:underline"
         >
           + Add answer
