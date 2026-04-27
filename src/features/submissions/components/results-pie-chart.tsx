@@ -38,33 +38,8 @@ const ResultsPieChart = ({ correct, total }: ResultsPieChartProps) => {
           startAngle={90}
           endAngle={-270}
         >
-          {chartData.map((entry, i) => (
-            <Cell key={i} fill={entry.fill} stroke="none" />
-          ))}
-          <Label
-            content={({ viewBox }) => {
-              if (!viewBox || !("cx" in viewBox)) return null;
-              const { cx, cy } = viewBox as { cx: number; cy: number };
-              return (
-                <text textAnchor="middle" dominantBaseline="middle">
-                  <tspan
-                    x={cx}
-                    y={cy - 8}
-                    style={{ fontSize: 24, fontWeight: 700, fill: "#111827" }}
-                  >
-                    {pct}%
-                  </tspan>
-                  <tspan
-                    x={cx}
-                    y={cy + 14}
-                    style={{ fontSize: 11, fill: "#9ca3af" }}
-                  >
-                    Score
-                  </tspan>
-                </text>
-              );
-            }}
-          />
+          
+          
         </Pie>
       </PieChart>
     </ChartContainer>

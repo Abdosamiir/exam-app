@@ -53,7 +53,7 @@ export const FullQuestionReview = ({
                 return (
                   <div
                     key={a.id}
-                    className={`flex items-center gap-3 rounded-lg border px-4 py-2.5 text-sm ${bg}`}
+                    className={`flex items-center gap-3 rounded-none  px-4 py-2.5 text-sm ${bg}`}
                   >
                     <span
                       className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${radioRing}`}
@@ -63,11 +63,11 @@ export const FullQuestionReview = ({
                       )}
                     </span>
                     <span className={textColor}>{a.text}</span>
-                    {isCorrect && !isSelected && (
+                    {/* {isCorrect && !isSelected && (
                       <span className="ml-auto text-xs font-semibold text-green-600">
                         Correct answer
                       </span>
-                    )}
+                    )} */}
                   </div>
                 );
               })}
