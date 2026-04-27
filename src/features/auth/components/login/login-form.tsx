@@ -24,7 +24,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginSchema>({
-    defaultValues: { username: "abdulrahman38", password: "Abdulrahman@123" },
+    defaultValues: { username: "", password: "" },
     resolver: async (values) => {
       const result = loginSchema.safeParse(values);
       if (result.success) return { values: result.data, errors: {} };
