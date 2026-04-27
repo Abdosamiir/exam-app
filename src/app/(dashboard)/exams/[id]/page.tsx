@@ -4,7 +4,6 @@ import { authOptions } from "@/shared/lib/auth";
 import { getExamById } from "@/features/exams/api/api.exams";
 import { getQuestionsByExam } from "@/features/questions/api/api.questions";
 import ExamQuiz from "@/features/exams/components/exam-quiz";
-import Link from "next/link";
 import { IExamDetailPayload } from "@/features/exams/types/exam";
 
 export default async function ExamQuestionsPage({
