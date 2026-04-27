@@ -6,6 +6,10 @@ export interface IDiploma {
   immutable: boolean;
   createdAt: string;
   updatedAt: string;
+  diploma: {
+    id: string;
+    title: string;
+  }
 }
 
 export interface IDiplomaMetadata {
