@@ -174,7 +174,7 @@ const ExamQuiz = ({ exam, onProgress }: ExamQuizProps) => {
           <Button
             onClick={() => handleSubmit(selectedAnswers)}
             disabled={isPending || submitted.current}
-            className="w-1/2 bg-green-600 px-6 py-4 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-1/2 rounded-none bg-green-600 px-5 py-5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isPending ? "Submitting…" : "Submit Exam"}
           </Button>
