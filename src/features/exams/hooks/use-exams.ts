@@ -1,7 +1,12 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   getExams,
   getExamById,
@@ -10,6 +15,26 @@ import {
   deleteExam,
 } from "../api/api.exams";
 import { ICreateExamFields, IUpdateExamFields } from "../types/exam";
+
+const PAGE_SIZE = 6;
+
+export function useInfiniteExams(diplomaId?: string) {
+  const { data: session } = useSession();
+  return useInfiniteQuery({
+    queryKey: ["exams", "infinite", diplomaId ?? "all"],
+    queryFn: ({ pageParam }) =>
+      getExams(
+        { diplomaId, page: pageParam as number, limit: PAGE_SIZE },
+        session?.accessToken,
+      ),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const meta = "payload" in lastPage ? lastPage.payload?.metadata : undefined;
+      if (!meta) return undefined;
+      return meta.page < meta.totalPages ? meta.page + 1 : undefined;
+    },
+  });
+}
 
 export function useExams(diplomaId?: string) {
   const { data: session } = useSession();
