@@ -13,7 +13,6 @@ import {
 } from "@/shared/components/ui/sidebar";
 import { SidebarNav } from "./_components/sidebar-nav";
 
-
 const DashboardSidebar = async () => {
   const session = await getServerSession(authOptions);
   const user = session?.user;
@@ -53,11 +52,11 @@ const DashboardSidebar = async () => {
                 {user.lastName?.[0]}
               </div>
             )}
-            <div className="flex flex-col items-start justify-start">
-              <span className="text-sm font-medium  truncate w-full text-blue-600">
+            <div className="flex min-w-0 flex-col items-start justify-start">
+              <span className="w-full truncate text-sm font-medium text-blue-600">
                 {user.firstName}
               </span>
-              <span className="text-xs text-muted-foreground truncate w-full text-center">
+              <span className="w-full truncate text-wrap text-xs text-muted-foreground">
                 {user.email}
               </span>
             </div>

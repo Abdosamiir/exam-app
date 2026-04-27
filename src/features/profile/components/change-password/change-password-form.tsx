@@ -62,7 +62,7 @@ const ChangePasswordForm = () => {
   };
 
   return (
-    <div className=" space-y-8 bg-white min-h-screen p-4">
+    <div className=" space-y-8 bg-white p-4">
    
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

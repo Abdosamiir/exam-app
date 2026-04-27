@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { User, Lock, PanelLeft, CircleUserRound } from "lucide-react";
+import { User, Lock, PanelLeft, CircleUserRound, LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { cn } from "@/shared/lib/utils/utils";
 import {
   Tooltip,
@@ -70,6 +71,24 @@ const AccountSidebar = () => {
             return <div key={href}>{linkEl}</div>;
           })}
         </nav>
+
+        <div className="border-t px-2 py-3">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-none px-3 py-2 text-sm font-medium  bg-red-50 text-red-500 transition-colors hover:cursor-pointer hover:bg-red-100",
+                  collapsed && "justify-center px-2",
+                )}
+              >
+                <LogOut className="size-4 shrink-0 rotate-180" />
+                {!collapsed && <span>Log out</span>}
+              </button>
+            </TooltipTrigger>
+            {collapsed && <TooltipContent side="right">Log out</TooltipContent>}
+          </Tooltip>
+        </div>
       </aside>
     </TooltipProvider>
   );
