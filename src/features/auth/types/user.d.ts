@@ -13,6 +13,7 @@ export interface IUser {
   emailVerified: boolean;
   phoneVerified: boolean;
   role: TRole;
+  immutable: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -13,6 +13,7 @@ import {
   createDiploma,
   updateDiploma,
   deleteDiploma,
+  toggleDiplomaImmutable,
 } from "../api/api.diplomas";
 import { ICreateDiplomaFields, IUpdateDiplomaFields } from "../types/diploma";
 
@@ -80,6 +81,17 @@ export function useDeleteDiploma() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteDiploma(id, session!.accessToken),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diplomas"] });
+    },
+  });
+}
+
+export function useToggleDiplomaImmutable() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => toggleDiplomaImmutable(id, session!.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diplomas"] });
     },

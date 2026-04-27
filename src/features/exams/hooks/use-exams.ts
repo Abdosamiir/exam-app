@@ -13,6 +13,7 @@ import {
   createExam,
   updateExam,
   deleteExam,
+  toggleExamImmutable,
 } from "../api/api.exams";
 import { ICreateExamFields, IUpdateExamFields } from "../types/exam";
 
@@ -84,6 +85,17 @@ export function useDeleteExam() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteExam(id, session!.accessToken),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["exams"] });
+    },
+  });
+}
+
+export function useToggleExamImmutable() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => toggleExamImmutable(id, session!.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
     },

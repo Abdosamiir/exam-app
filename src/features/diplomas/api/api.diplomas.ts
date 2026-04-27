@@ -64,3 +64,14 @@ export async function deleteDiploma(
   });
   return res.json();
 }
+
+export async function toggleDiplomaImmutable(
+  id: string,
+  token: string,
+): Promise<IApiResponse<IDiploma>> {
+  const res = await fetch(`${API_BASE}/admin/diplomas/${id}/immutable`, {
+    method: "PATCH",
+    headers: authHeaders(token),
+  });
+  return res.json();
+}

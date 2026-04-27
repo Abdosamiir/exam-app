@@ -66,6 +66,17 @@ export async function deleteQuestion(
   return res.json();
 }
 
+export async function toggleQuestionImmutable(
+  id: string,
+  token: string,
+): Promise<IApiResponse<IQuestion>> {
+  const res = await fetch(`${API_BASE}/admin/questions/${id}/immutable`, {
+    method: "PATCH",
+    headers: authHeaders(token),
+  });
+  return res.json();
+}
+
 export async function bulkCreateQuestions(
   examId: string,
   data: IBulkCreateQuestionsFields,

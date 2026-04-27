@@ -8,6 +8,7 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  toggleQuestionImmutable,
   bulkCreateQuestions,
 } from "../api/api.questions";
 import {
@@ -66,6 +67,17 @@ export function useDeleteQuestion(examId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteQuestion(id, session!.accessToken),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["questions", "exam", examId] });
+    },
+  });
+}
+
+export function useToggleQuestionImmutable(examId: string) {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => toggleQuestionImmutable(id, session!.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questions", "exam", examId] });
     },
