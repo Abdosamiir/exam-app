@@ -62,13 +62,8 @@ const ChangePasswordForm = () => {
   };
 
   return (
-    <div className="mx-auto max-w-xl space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Change Password</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Update your account password.
-        </p>
-      </div>
+    <div className=" space-y-8 bg-white min-h-screen p-4">
+   
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <Controller
@@ -149,9 +144,9 @@ const ChangePasswordForm = () => {
           <Button
             type="submit"
             disabled={isPending}
-            className="bg-blue-600 text-white hover:bg-blue-700 rounded-none px-6"
+            className="bg-blue-600 w-full text-white hover:bg-blue-700 rounded-none px-6 py-5 capitalize"
           >
-            {isPending ? "Saving…" : "Save changes"}
+            {isPending ? "Saving…" : "update password"}
           </Button>
         </div>
       </form>
