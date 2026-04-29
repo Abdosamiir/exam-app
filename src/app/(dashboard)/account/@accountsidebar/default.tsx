@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { User, Lock, PanelLeft, CircleUserRound, LogOut } from "lucide-react";
+import { Lock, PanelLeft, CircleUserRound, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/shared/lib/utils/utils";
 import {
@@ -26,11 +26,11 @@ const AccountSidebar = () => {
     <TooltipProvider delayDuration={0}>
       <aside
         className={cn(
-          "shrink-0 border-r bg-white flex flex-col transition-all duration-300 ease-in-out",
-          collapsed ? "w-14" : "w-56",
+          "flex shrink-0 flex-row border-b bg-white transition-all duration-300 ease-in-out md:flex-col md:border-b-0 md:border-r",
+          collapsed ? "md:w-14" : "md:w-56",
         )}
       >
-        <div className="flex items-center border-b px-2 py-2">
+        <div className="hidden items-center border-b px-2 py-2 md:flex">
           <button
             onClick={() => setCollapsed((c) => !c)}
             className="flex items-center justify-center rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
@@ -40,7 +40,7 @@ const AccountSidebar = () => {
           </button>
         </div>
 
-        <nav className="flex-1 px-2 py-6 flex flex-col gap-1">
+        <nav className="flex min-w-0 flex-1 gap-1 overflow-x-auto px-2 py-2 md:flex-col md:overflow-visible md:py-6">
           {navItems.map(({ href, label, icon: Icon }) => {
             const isActive =
               pathname === href || pathname.startsWith(href + "/");
@@ -49,13 +49,13 @@ const AccountSidebar = () => {
               <Link
                 href={href}
                 className={cn(
-                  "flex items-center gap-3 rounded-none px-3 py-2 text-sm font-medium text-gray-500 hover:text-blue-500! hover:bg-blue-100! transition-colors",
-                  collapsed && "justify-center px-2 ",
+                  "flex items-center gap-2 whitespace-nowrap rounded-none px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-blue-100! hover:text-blue-500! sm:gap-3",
+                  collapsed && "md:justify-center md:px-2",
                   isActive && "text-blue-500 bg-blue-50",
                 )}
               >
                 <Icon className="size-4 shrink-0" />
-                {!collapsed && <span className="truncate">{label}</span>}
+                <span className={cn(collapsed && "md:hidden")}>{label}</span>
               </Link>
             );
 
@@ -63,7 +63,9 @@ const AccountSidebar = () => {
               return (
                 <Tooltip key={href}>
                   <TooltipTrigger asChild>{linkEl}</TooltipTrigger>
-                  <TooltipContent side="right">{label}</TooltipContent>
+                  <TooltipContent side="right" className="hidden md:block">
+                    {label}
+                  </TooltipContent>
                 </Tooltip>
               );
             }
@@ -72,21 +74,29 @@ const AccountSidebar = () => {
           })}
         </nav>
 
-        <div className="border-t px-2 py-3">
+        <div className="border-l px-2 py-2 md:border-l-0 md:border-t md:py-3">
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-none px-3 py-2 text-sm font-medium  bg-red-50 text-red-500 transition-colors hover:cursor-pointer hover:bg-red-100",
-                  collapsed && "justify-center px-2",
+                  "flex w-full items-center gap-2 whitespace-nowrap rounded-none bg-red-50 px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:cursor-pointer hover:bg-red-100 sm:gap-3",
+                  collapsed && "md:justify-center md:px-2",
                 )}
               >
                 <LogOut className="size-4 shrink-0 rotate-180" />
-                {!collapsed && <span>Log out</span>}
+                <span
+                  className={cn("hidden md:block", collapsed && "md:hidden")}
+                >
+                  Log out
+                </span>
               </button>
             </TooltipTrigger>
-            {collapsed && <TooltipContent side="right">Log out</TooltipContent>}
+            {collapsed && (
+              <TooltipContent side="right" className="hidden md:block">
+                Log out
+              </TooltipContent>
+            )}
           </Tooltip>
         </div>
       </aside>

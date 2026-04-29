@@ -20,23 +20,24 @@ export function PageHeader() {
   if (!firstSegment) return null;
 
   return (
-    <div className="flex items-center justify-center gap-2 w-full pt-6">
+    <div className="flex w-full items-center gap-2 px-4 pt-4 sm:px-6 sm:pt-6">
       <button
         onClick={() => router.back()}
-        className="h-full cursor-pointer flex items-center justify-center text-blue-600 border border-blue-600 ml-6"
+        className="flex min-h-full w-8 shrink-0 cursor-pointer items-center justify-center self-stretch border border-blue-600 text-blue-600"
+        aria-label="Go back"
       >
-        <ChevronLeftIcon />
+        <ChevronLeftIcon className="size-5" />
       </button>
-      <div className="bg-blue-600 px-6 py-4 w-full">
-        <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+      <div className="min-w-0 flex-1 bg-blue-600 px-4 py-3 sm:px-6 sm:py-4">
+        <h1 className="flex min-w-0 items-center gap-2 truncate text-lg font-semibold text-white sm:text-xl">
           {firstSegment === "exams" ? (
-            <BookOpenCheck className="inline-block size-8" />
+            <BookOpenCheck className="inline-block size-7 shrink-0 sm:size-8" />
           ) : firstSegment === "account" ? (
-            <UserRound className="inline-block size-8" />
+            <UserRound className="inline-block size-7 shrink-0 sm:size-8" />
           ) : (
-            <GraduationCap className="inline-block size-8" />
+            <GraduationCap className="inline-block size-7 shrink-0 sm:size-8" />
           )}
-          {formatPageName(firstSegment)}
+          <span className="min-w-0 truncate">{formatPageName(firstSegment)}</span>
         </h1>
       </div>
     </div>

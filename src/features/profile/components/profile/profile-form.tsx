@@ -101,13 +101,13 @@ const ProfileForm = () => {
   }
 
   return (
-    <div className="max-w-full space-y-6 bg-white  p-4">
+    <div className="w-full max-w-full space-y-6 bg-white p-4 sm:p-5">
       <form
         id="profile-form"
         onSubmit={form.handleSubmit(onSave)}
-        className="space-y-5 "
+        className="space-y-5"
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Controller
             name="firstName"
             control={form.control}
@@ -191,11 +191,11 @@ const ProfileForm = () => {
       )}
 
       {/* Buttons are outside <form> and linked to it via the form attribute */}
-      <div className="flex gap-4 items-center justify-between pt-2">
+      <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <Button
           type="button"
           variant="destructive"
-          className="flex-1 rounded-none text-red-500 hover:text-white bg-red-50 py-5"
+          className="w-full rounded-none bg-red-50 py-5 text-red-500 hover:text-white sm:flex-1"
           onClick={() => setDeleteConfirm(true)}
         >
           Delete my account
@@ -205,14 +205,17 @@ const ProfileForm = () => {
           type="submit"
           form="profile-form"
           disabled={isUpdating}
-          className="bg-blue-600 flex-1 text-white hover:bg-blue-700 rounded-none px-6 py-5"
+          className="w-full rounded-none bg-blue-600 px-6 py-5 text-white hover:bg-blue-700 sm:flex-1"
         >
           {isUpdating ? "Saving…" : "Save changes"}
         </Button>
       </div>
 
       <Dialog open={deleteConfirm} onOpenChange={setDeleteConfirm}>
-        <DialogContent showCloseButton={false} className="p-5 overflow-hidden rounded-none max-w-1/3 text-center">
+        <DialogContent
+          showCloseButton={false}
+          className="w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-none p-4 text-center sm:p-5"
+        >
           <button
             onClick={() => setDeleteConfirm(false)}
             className="absolute right-4 top-4 z-20 rounded opacity-70 hover:opacity-100"
@@ -223,7 +226,7 @@ const ProfileForm = () => {
             <span className="sr-only">Close</span>
           </button>
 
-          <div className="flex flex-col items-center px-8 pt-10 pb-6 gap-3">
+          <div className="flex flex-col items-center gap-3 px-4 pt-10 pb-6 sm:px-8">
             <div className="flex items-center justify-center size-20 rounded-full bg-red-50">
               <div className="flex items-center justify-center size-14 rounded-full bg-red-100">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -239,11 +242,11 @@ const ProfileForm = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-4 border-t">
+          <div className="grid grid-cols-1 gap-2 border-t pt-4 sm:grid-cols-2">
             <button
               type="button"
               onClick={() => setDeleteConfirm(false)}
-              className="py-4 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors border-r"
+              className="py-4 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors sm:border-r"
             >
               Cancel
             </button>

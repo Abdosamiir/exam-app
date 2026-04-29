@@ -184,7 +184,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
     <>
       <Field>
         <div className="flex flex-col gap-1">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <FieldLabel htmlFor="email">Email</FieldLabel>
             <Button
               type="button"
@@ -218,11 +218,11 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
       >
         <DialogContent
           showCloseButton={false}
-          className="p-4 overflow-hidden rounded-none max-w-1/3"
+          className="w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-none p-4"
         >
           {/* stepper */}
-          <div className="relative flex items-center justify-between px-4 pt-6 pb-0">
-            <div className="absolute left-10 right-10 top-[calc(1.5rem+8px)] h-px border-t-2 border-dashed border-blue-200" />
+          <div className="relative flex items-center justify-between px-2 pt-6 pb-0 sm:px-4">
+            <div className="absolute left-8 right-8 top-[calc(1.5rem+8px)] h-px border-t-2 border-dashed border-blue-200 sm:left-10 sm:right-10" />
             {[0, 1].map((i) => {
               const active = i === 0 ? true : step === "confirm";
               return (
@@ -259,7 +259,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
           </div>
 
           {/* body */}
-          <div className="px-5 pt-5 pb-0">
+          <div className="px-2 pt-5 pb-0 sm:px-5">
             <h2 className="text-xl font-bold text-gray-900 mb-1">
               Change Email
             </h2>
@@ -325,7 +325,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
                   className="space-y-4"
                 >
                   <div
-                    className="flex justify-center gap-2"
+                    className="grid grid-cols-6 gap-1.5 sm:flex sm:justify-center sm:gap-2"
                     onPaste={handleOtpPaste}
                   >
                     {otp.map((digit, i) => (
@@ -342,7 +342,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
                         onKeyDown={(e) => handleOtpKeyDown(i, e)}
                         onFocus={() => setFocusedOtpIndex(i)}
                         onBlur={() => setFocusedOtpIndex(null)}
-                        className={`size-11 text-center text-lg font-semibold border rounded-none outline-none transition-colors ${
+                        className={`h-10 w-full min-w-0 text-center text-lg font-semibold border rounded-none outline-none transition-colors sm:size-11 ${
                           focusedOtpIndex === i
                             ? "border-blue-500"
                             : "border-gray-300"

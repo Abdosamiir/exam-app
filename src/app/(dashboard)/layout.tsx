@@ -10,12 +10,14 @@ export default function DashboardLayout({
   sidebar: React.ReactNode;
 }) {
   return (
-    <SidebarProvider style={{ "--sidebar": "var(--color-blue-50)" } as React.CSSProperties}>
+    <SidebarProvider
+      style={{ "--sidebar": "var(--color-blue-50)" } as React.CSSProperties}
+    >
       {sidebar}
       <SidebarInset>
         <DashboardBreadcrumb />
         <PageHeader />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
