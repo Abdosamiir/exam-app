@@ -39,13 +39,13 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex gap-6 h-[calc(100vh-120px)]">
-        <div className="w-64 shrink-0 animate-pulse rounded-2xl bg-gray-100" />
-        <div className="flex-1 flex flex-col gap-3">
+      <div className="flex flex-col gap-4 md:h-[calc(100vh-120px)] md:flex-row md:gap-6">
+        <div className="h-52 w-full shrink-0 animate-pulse rounded-none bg-gray-100 md:h-auto md:w-64" />
+        <div className="flex flex-1 flex-col gap-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="h-20 animate-pulse rounded-lg bg-gray-100"
+              className="h-20 animate-pulse rounded-none bg-gray-100"
             />
           ))}
         </div>
@@ -70,10 +70,12 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
     submission;
 
   return (
-    <div className="flex flex-col gap-4 h-[calc(100vh-80px)]">
+    <div className="flex min-h-0 flex-col gap-4 md:h-[calc(100vh-80px)]">
       {/* Top bar */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-base font-semibold text-gray-700">{examTitle}</h1>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="min-w-0 truncate text-base font-semibold text-gray-700">
+          {examTitle}
+        </h1>
         <span className="text-sm text-gray-500">
           Question{" "}
           <span className="font-bold text-blue-600">{totalQuestions}</span> of{" "}
@@ -88,12 +90,12 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
 
       {/* Main content */}
       <p className="text-lg font-bold text-blue-700 self-start">Results:</p>
-      <div className="flex gap-6 flex-1 min-h-0 md:flex-row flex-col ">
+      <div className="flex flex-col gap-4 md:min-h-0 md:flex-1 md:flex-row md:gap-6">
         {/* Left panel — stats */}
-        <div className="w-64 shrink-0 rounded-none bg-blue-50 border border-blue-100 flex flex-col items-center justify-center gap-5 p-6">
+        <div className="flex w-full shrink-0 flex-col items-center justify-center gap-5 rounded-none border border-blue-100 bg-blue-50 p-4 sm:flex-row sm:p-5 md:w-64 md:flex-col md:p-6">
           <ResultsPieChart correct={correctAnswers} total={totalQuestions} />
 
-          <div className="flex flex-col gap-2.5 w-full">
+          <div className="flex w-full flex-col gap-2.5">
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <span className="h-3 w-3 rounded-sm bg-green-500 shrink-0" />
               Correct:
@@ -112,7 +114,7 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
         </div>
 
         {/* Right panel — question review */}
-        <div className="flex-1 min-h-0 rounded-none border border-dashed border-gray-300 bg-white p-5 overflow-y-auto">
+        <div className="w-full rounded-none border border-dashed border-gray-300 bg-white p-4 md:min-h-0 md:flex-1 md:overflow-y-auto md:p-5">
           {analytics.length > 0 ? (
             storedQuestions && storedQuestions.length > 0 ? (
               <FullQuestionReview
@@ -133,17 +135,17 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
       </div>
 
       {/* Bottom actions */}
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <Link
           href={`/exams/${examId}`}
-          className="flex flex-1 items-center justify-center gap-2 rounded-none border border-gray-300 bg-gray-100 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-colors"
+          className="flex w-full flex-1 items-center justify-center gap-2 rounded-none border border-gray-300 bg-gray-100 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200"
         >
           <RotateCcw className="size-5" />
           Restart
         </Link>
         <Link
           href="/diplomas"
-          className="flex flex-1 items-center justify-center gap-2 rounded-none bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+          className="flex w-full flex-1 items-center justify-center gap-2 rounded-none bg-blue-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
         >
           <FolderSearch className="size-5" />
           Explore

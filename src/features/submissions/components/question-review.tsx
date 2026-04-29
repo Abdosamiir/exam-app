@@ -53,7 +53,7 @@ export const FullQuestionReview = ({
                 return (
                   <div
                     key={a.id}
-                    className={`flex items-center gap-3 rounded-none  px-4 py-2.5 text-sm ${bg}`}
+                    className={`flex items-start gap-3 rounded-none px-3 py-2.5 text-sm sm:px-4 ${bg}`}
                   >
                     <span
                       className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${radioRing}`}
@@ -62,7 +62,9 @@ export const FullQuestionReview = ({
                         <span className="h-1.5 w-1.5 rounded-full bg-white" />
                       )}
                     </span>
-                    <span className={textColor}>{a.text}</span>
+                    <span className={`min-w-0 break-words ${textColor}`}>
+                      {a.text}
+                    </span>
                     {/* {isCorrect && !isSelected && (
                       <span className="ml-auto text-xs font-semibold text-green-600">
                         Correct answer
@@ -96,40 +98,48 @@ export const SimpleQuestionReview = ({
         </p>
         <div className="flex flex-col gap-1.5">
           <div
-            className={`flex items-center gap-3 rounded-lg border px-4 py-2.5 text-sm ${
+            className={`flex flex-col items-start gap-2 rounded-none border px-3 py-2.5 text-sm sm:flex-row sm:items-center sm:gap-3 sm:px-4 ${
               item.isCorrect
                 ? "bg-green-50 border-green-300"
                 : "bg-red-50 border-red-300"
             }`}
           >
-            <span
-              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
-                item.isCorrect
-                  ? "border-green-500 bg-green-500"
-                  : "border-red-500 bg-red-500"
-              }`}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-white" />
+            <div className="flex min-w-0 items-start gap-3 sm:items-center">
+              <span
+                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 sm:mt-0 ${
+                  item.isCorrect
+                    ? "border-green-500 bg-green-500"
+                    : "border-red-500 bg-red-500"
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-white" />
+              </span>
+              <span
+                className={`min-w-0 break-words ${
+                  item.isCorrect
+                    ? "text-green-700 font-medium"
+                    : "text-red-700"
+                }`}
+              >
+                {item.selectedAnswer.text}
+              </span>
+            </div>
+            <span className="text-xs text-gray-400 sm:ml-auto">
+              Your answer
             </span>
-            <span
-              className={
-                item.isCorrect ? "text-green-700 font-medium" : "text-red-700"
-              }
-            >
-              {item.selectedAnswer.text}
-            </span>
-            <span className="ml-auto text-xs text-gray-400">Your answer</span>
           </div>
 
           {!item.isCorrect && (
-            <div className="flex items-center gap-3 rounded-lg border bg-green-50 border-green-300 px-4 py-2.5 text-sm">
-              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-green-500 bg-green-500">
-                <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              </span>
-              <span className="text-green-700 font-medium">
-                {item.correctAnswer.text}
-              </span>
-              <span className="ml-auto text-xs font-semibold text-green-600">
+            <div className="flex flex-col items-start gap-2 rounded-none border bg-green-50 border-green-300 px-3 py-2.5 text-sm sm:flex-row sm:items-center sm:gap-3 sm:px-4">
+              <div className="flex min-w-0 items-start gap-3 sm:items-center">
+                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-green-500 bg-green-500 sm:mt-0">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                </span>
+                <span className="min-w-0 break-words text-green-700 font-medium">
+                  {item.correctAnswer.text}
+                </span>
+              </div>
+              <span className="text-xs font-semibold text-green-600 sm:ml-auto">
                 Correct answer
               </span>
             </div>
