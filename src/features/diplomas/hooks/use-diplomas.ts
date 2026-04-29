@@ -20,11 +20,12 @@ import { ICreateDiplomaFields, IUpdateDiplomaFields } from "../types/diploma";
 const PAGE_SIZE = 6;
 
 export function useInfiniteDiplomas() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   return useInfiniteQuery({
     queryKey: ["diplomas", "infinite"],
     queryFn: ({ pageParam }) =>
       getDiplomas(session?.accessToken, pageParam as number, PAGE_SIZE),
+    enabled: status === "authenticated",
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const meta = "payload" in lastPage ? lastPage.payload?.metadata : undefined;
