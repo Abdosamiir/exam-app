@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, GraduationCap, Logs, UserRound } from "lucide-react";
+import {  BookOpenCheck, GraduationCap, Logs, UserRound } from "lucide-react";
 import { cn } from "@/shared/lib/utils/utils";
 import {
   SidebarMenu,
@@ -12,7 +12,7 @@ import {
 
 const navItems = [
   { href: "/admin/diplomas", label: "Diplomas", icon: GraduationCap },
-  { href: "/admin/exams", label: "exams", icon: BookOpen },
+  { href: "/admin/exams", label: "exams", icon: BookOpenCheck },
   { href: "/admin/account", label: "Account Settings", icon: UserRound },
   { href: "/admin/audit-log", label: "Audit Log", icon: Logs },
 ];
@@ -30,7 +30,7 @@ export function AdminSidebarNav() {
               <Link
                 href={href}
                 className={cn(
-                  "w-full   rounded-none text-base! p-4 py-6 mb-2 text-gray-300 hover:text-white! hover:bg-gray-700!",
+                  "w-full capitalize rounded-none text-base! p-4 py-6 mb-2 text-gray-300 hover:text-white! hover:bg-gray-700!",
                   isActive && "border border-gray-400 text-white! bg-gray-700!",
                 )}
               >

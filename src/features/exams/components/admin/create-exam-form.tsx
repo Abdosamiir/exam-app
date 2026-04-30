@@ -12,10 +12,10 @@ const CreateExamForm = () => {
   if (!hasPermission("create:exams", session?.user.role)) return null;
 
   return (
-    <Button asChild className="rounded-none bg-blue-600 text-white">
+    <Button asChild className="rounded-none bg-emerald-600 hover:bg-emerald-700 text-white">
       <Link href="/admin/exams/add">
         <Plus className="h-4 w-4" />
-        New Exam
+       Create New Exam
       </Link>
     </Button>
   );

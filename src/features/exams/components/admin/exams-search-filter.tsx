@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { useDiplomas } from "@/features/diplomas/hooks/use-diplomas";
 
 const ExamsSearchFilter = () => {
   const router = useRouter();
@@ -20,6 +21,15 @@ const ExamsSearchFilter = () => {
   const [immutable, setImmutable] = useState(
     searchParams.get("immutable") ?? "all",
   );
+  const [diplomaId, setDiplomaId] = useState(
+    searchParams.get("diplomaId") ?? "all",
+  );
+
+  const { data: diplomasData } = useDiplomas(1, 100);
+  const diplomas =
+    diplomasData && "payload" in diplomasData
+      ? (diplomasData.payload?.data ?? [])
+      : [];
 
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -31,12 +41,16 @@ const ExamsSearchFilter = () => {
     if (immutable !== "all") params.set("immutable", immutable);
     else params.delete("immutable");
 
+    if (diplomaId !== "all") params.set("diplomaId", diplomaId);
+    else params.delete("diplomaId");
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const clearFilters = () => {
     setSearch("");
     setImmutable("all");
+    setDiplomaId("all");
     router.push(pathname);
   };
 
@@ -78,16 +92,32 @@ const ExamsSearchFilter = () => {
             />
           </div>
 
-          <Select value={immutable} onValueChange={setImmutable}>
-            <SelectTrigger className="w-full sm:w-1/4">
-              <SelectValue placeholder="Immutability" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="true">Immutable</SelectItem>
-              <SelectItem value="false">Mutable</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap gap-3">
+            <Select value={diplomaId} onValueChange={setDiplomaId}>
+              <SelectTrigger className="w-full sm:w-1/4">
+                <SelectValue placeholder="Diploma" />
+              </SelectTrigger>
+              <SelectContent >
+                <SelectItem value="all" className="text-gray-400!"> Diplomas</SelectItem>
+                {diplomas.map((diploma) => (
+                  <SelectItem key={diploma.id} value={diploma.id}>
+                    {diploma.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={immutable} onValueChange={setImmutable}>
+              <SelectTrigger className="w-full sm:w-1/4">
+                <SelectValue placeholder="Immutability" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="true">Immutable</SelectItem>
+                <SelectItem value="false">Mutable</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="flex justify-end gap-2">
             <button

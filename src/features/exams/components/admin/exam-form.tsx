@@ -2,12 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { useDiplomas } from "@/features/diplomas/hooks/use-diplomas";
 import { Button } from "@/shared/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import ImageUploadField from "@/shared/components/ui/image-upload-field";
 import { Input } from "@/shared/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
+import { cn } from "@/shared/lib/utils/utils";
 import { useCreateExam, useUpdateExam } from "../../hooks/use-exams";
 import {
   ICreateExamFields,
@@ -75,115 +83,146 @@ const ExamForm = ({ exam, mode }: ExamFormProps) => {
   };
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex max-w-2xl flex-col gap-5"
-    >
-      <Field>
-        <FieldLabel htmlFor="title">Title</FieldLabel>
-        <Input
-          id="title"
-          placeholder="Exam title"
-          {...form.register("title", { required: "Title is required" })}
-          aria-invalid={!!form.formState.errors.title}
-        />
-        {form.formState.errors.title && (
-          <FieldError errors={[form.formState.errors.title]} />
-        )}
-      </Field>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-full">
+      <div className="overflow-hidden border border-border shadow-sm">
+        <div className="bg-blue-600 px-6 py-3">
+          <h2 className="text-sm font-semibold tracking-wide text-white uppercase">
+            Exam Information
+          </h2>
+        </div>
 
-      <Field>
-        <FieldLabel htmlFor="description">Description</FieldLabel>
-        <Input
-          id="description"
-          placeholder="Description"
-          {...form.register("description", {
-            required: "Description is required",
-          })}
-          aria-invalid={!!form.formState.errors.description}
-        />
-        {form.formState.errors.description && (
-          <FieldError errors={[form.formState.errors.description]} />
-        )}
-      </Field>
+        <div className="bg-background p-6">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-2">
+            <Field>
+              <FieldLabel htmlFor="title">Title</FieldLabel>
+              <Input
+                id="title"
+                placeholder="Exam title"
+                {...form.register("title", { required: "Title is required" })}
+                aria-invalid={!!form.formState.errors.title}
+              />
+              {form.formState.errors.title && (
+                <FieldError errors={[form.formState.errors.title]} />
+              )}
+            </Field>
 
-      <Field>
-        <FieldLabel>Image</FieldLabel>
-        <ImageUploadField
-          value={image ?? ""}
-          onChange={(url) =>
-            form.setValue("image", url, {
-              shouldDirty: true,
-              shouldValidate: true,
-            })
-          }
-        />
-      </Field>
+            <Field>
+              <FieldLabel htmlFor="diplomaId">Diploma</FieldLabel>
+              <Controller
+                control={form.control}
+                name="diplomaId"
+                rules={{ required: "Diploma is required" }}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      id="diplomaId"
+                      className={cn(
+                        "w-full",
+                        form.formState.errors.diplomaId && "aria-invalid:border-destructive",
+                      )}
+                      aria-invalid={!!form.formState.errors.diplomaId}
+                    >
+                      <SelectValue placeholder="Select a diploma" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {diplomas.map((diploma) => (
+                        <SelectItem key={diploma.id} value={diploma.id}>
+                          {diploma.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {form.formState.errors.diplomaId && (
+                <FieldError errors={[form.formState.errors.diplomaId]} />
+              )}
+            </Field>
 
-      <Field>
-        <FieldLabel htmlFor="duration">Duration (minutes)</FieldLabel>
-        <Input
-          id="duration"
-          type="number"
-          min={1}
-          {...form.register("duration", {
-            required: "Duration is required",
-            valueAsNumber: true,
-            min: { value: 1, message: "Must be at least 1 minute" },
-          })}
-          aria-invalid={!!form.formState.errors.duration}
-        />
-        {form.formState.errors.duration && (
-          <FieldError errors={[form.formState.errors.duration]} />
-        )}
-      </Field>
+            <Field>
+              <FieldLabel>Image</FieldLabel>
+              <ImageUploadField
+                value={image ?? ""}
+                onChange={(url) =>
+                  form.setValue("image", url, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              />
+            </Field>
 
-      <Field>
-        <FieldLabel htmlFor="diplomaId">Diploma</FieldLabel>
-        <select
-          id="diplomaId"
-          className="w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          {...form.register("diplomaId", { required: "Diploma is required" })}
-        >
-          <option value="">Select a diploma</option>
-          {diplomas.map((diploma) => (
-            <option key={diploma.id} value={diploma.id}>
-              {diploma.title}
-            </option>
-          ))}
-        </select>
-        {form.formState.errors.diplomaId && (
-          <FieldError errors={[form.formState.errors.diplomaId]} />
-        )}
-      </Field>
+            <Field>
+              <FieldLabel htmlFor="description">Description</FieldLabel>
+              <textarea
+                id="description"
+                rows={4}
+                placeholder="Enter exam description..."
+                className={cn(
+                  "border-input placeholder:text-muted-foreground w-full border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none resize-none",
+                  "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+                  form.formState.errors.description &&
+                    "border-destructive ring-destructive/20",
+                )}
+                {...form.register("description", {
+                  required: "Description is required",
+                })}
+                aria-invalid={!!form.formState.errors.description}
+              />
+              {form.formState.errors.description && (
+                <FieldError errors={[form.formState.errors.description]} />
+              )}
+            </Field>
 
-      {formError && (
-        <p role="alert" className="text-sm text-destructive">
-          {formError}
-        </p>
-      )}
+            <Field className="md:col-span-2 md:max-w-xs">
+              <FieldLabel htmlFor="duration">Duration (min)</FieldLabel>
+              <Input
+                id="duration"
+                type="number"
+                min={1}
+                {...form.register("duration", {
+                  required: "Duration is required",
+                  valueAsNumber: true,
+                  min: { value: 1, message: "Must be at least 1 minute" },
+                })}
+                aria-invalid={!!form.formState.errors.duration}
+              />
+              {form.formState.errors.duration && (
+                <FieldError errors={[form.formState.errors.duration]} />
+              )}
+            </Field>
+          </div>
 
-      <div className="flex gap-2">
-        <Button
-          disabled={isPending}
-          className="rounded-none bg-blue-600 text-white"
-        >
-          {isPending
-            ? mode === "create"
-              ? "Creating..."
-              : "Saving..."
-            : mode === "create"
-              ? "Create"
-              : "Save changes"}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className="rounded-none"
-          onClick={() => router.back()}
-        >
-          Cancel
-        </Button>
+          {formError && (
+            <p role="alert" className="mt-4 text-sm text-destructive">
+              {formError}
+            </p>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3 border-t border-border bg-muted/30 px-6 py-4">
+          <Button
+            disabled={isPending}
+            className="rounded-none bg-blue-600 text-white hover:bg-blue-700"
+          >
+            {isPending
+              ? mode === "create"
+                ? "Creating..."
+                : "Saving..."
+              : mode === "create"
+                ? "Create Exam"
+                : "Save Changes"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-none"
+            onClick={() => router.back()}
+          >
+            Cancel
+          </Button>
+        </div>
       </div>
     </form>
   );
