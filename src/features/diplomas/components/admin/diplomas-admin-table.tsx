@@ -144,7 +144,7 @@ const DiplomaRowMenu = ({
                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 onClick={() => setOpen(false)}
               >
-                <Eye size={14} />
+                <Eye size={14} className="text-green-500" />
                 View
               </Link>
               <button
@@ -155,15 +155,15 @@ const DiplomaRowMenu = ({
                   setOpen(false);
                 }}
               >
-                <Pencil size={14} />
+                <Pencil size={14} className="text-blue-500" />
                 Edit
               </button>
               <button
                 type="button"
-                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm "
                 onClick={() => setConfirming(true)}
               >
-                <Trash2 size={14} />
+                <Trash2 size={14} className="text-red-500" />
                 Delete
               </button>
             </>

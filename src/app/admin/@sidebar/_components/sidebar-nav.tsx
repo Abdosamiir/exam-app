@@ -30,8 +30,8 @@ export function AdminSidebarNav() {
               <Link
                 href={href}
                 className={cn(
-                  "w-full border border-gray-400 rounded-none text-base! p-4 py-6 mb-2 text-gray-300 hover:text-white! hover:bg-gray-700!",
-                  isActive && "text-white! bg-gray-700!",
+                  "w-full   rounded-none text-base! p-4 py-6 mb-2 text-gray-300 hover:text-white! hover:bg-gray-700!",
+                  isActive && "border border-gray-400 text-white! bg-gray-700!",
                 )}
               >
                 <Icon className="size-5!" />
