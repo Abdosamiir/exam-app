@@ -5,13 +5,10 @@ import { useForm } from "react-hook-form";
 import { useUpdateExam } from "../../hooks/use-exams";
 import { useDiplomas } from "@/features/diplomas/hooks/use-diplomas";
 import { IExam, IUpdateExamFields } from "../../types/exam";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/shared/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
+import ImageUploadField from "@/shared/components/ui/image-upload-field";
 
 interface EditExamFormProps {
   exam: IExam;
@@ -69,8 +66,11 @@ const EditExamForm = ({ exam, onClose }: EditExamFormProps) => {
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="edit-image">Image URL</FieldLabel>
-        <Input id="edit-image" placeholder="https://..." {...form.register("image")} />
+        <FieldLabel>Image</FieldLabel>
+        <ImageUploadField
+          value={form.watch("image") ?? ""}
+          onChange={(url) => form.setValue("image", url)}
+        />
       </Field>
 
       <Field>
@@ -95,9 +95,7 @@ const EditExamForm = ({ exam, onClose }: EditExamFormProps) => {
         >
           <option value="">Select a diploma</option>
           {diplomas.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.title}
-            </option>
+            <option key={d.id} value={d.id}>{d.title}</option>
           ))}
         </select>
       </Field>

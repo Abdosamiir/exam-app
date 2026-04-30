@@ -4,6 +4,7 @@ import { authOptions } from "@/shared/lib/auth";
 import { getDiplomas } from "@/features/diplomas/api/api.diplomas";
 import DiplomasAdminTable from "@/features/diplomas/components/admin/diplomas-admin-table";
 import CreateDiplomaForm from "@/features/diplomas/components/admin/create-diploma-form";
+import SeedButton from "@/features/admin/components/seed-button";
 
 export default async function AdminDiplomasPage() {
   const session = await getServerSession(authOptions);
@@ -19,7 +20,10 @@ export default async function AdminDiplomasPage() {
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Manage Diplomas</h1>
-          <CreateDiplomaForm />
+          <div className="flex items-center gap-3">
+            <SeedButton />
+            <CreateDiplomaForm />
+          </div>
         </div>
         <DiplomasAdminTable />
       </div>

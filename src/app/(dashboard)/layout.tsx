@@ -1,3 +1,7 @@
+import { SidebarProvider, SidebarInset } from "@/shared/components/ui/sidebar";
+import { DashboardBreadcrumb } from "../_components/shared/dashboard-breadcrumb";
+import { PageHeader } from "../_components/shared/page-header";
+
 export default function DashboardLayout({
   children,
   sidebar,
@@ -6,9 +10,15 @@ export default function DashboardLayout({
   sidebar: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <SidebarProvider
+      style={{ "--sidebar": "var(--color-blue-50)" } as React.CSSProperties}
+    >
       {sidebar}
-      <main className="flex-1 p-6">{children}</main>
-    </div>
+      <SidebarInset>
+        <DashboardBreadcrumb />
+        <PageHeader />
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

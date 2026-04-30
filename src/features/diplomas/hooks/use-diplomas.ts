@@ -1,15 +1,39 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   getDiplomas,
   getDiplomaById,
   createDiploma,
   updateDiploma,
   deleteDiploma,
+  toggleDiplomaImmutable,
 } from "../api/api.diplomas";
 import { ICreateDiplomaFields, IUpdateDiplomaFields } from "../types/diploma";
+
+const PAGE_SIZE = 6;
+
+export function useInfiniteDiplomas() {
+  const { data: session, status } = useSession();
+  return useInfiniteQuery({
+    queryKey: ["diplomas", "infinite"],
+    queryFn: ({ pageParam }) =>
+      getDiplomas(session?.accessToken, pageParam as number, PAGE_SIZE),
+    enabled: status === "authenticated",
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const meta = "payload" in lastPage ? lastPage.payload?.metadata : undefined;
+      if (!meta) return undefined;
+      return meta.page < meta.totalPages ? meta.page + 1 : undefined;
+    },
+  });
+}
 
 export function useDiplomas() {
   const { data: session } = useSession();
@@ -58,6 +82,17 @@ export function useDeleteDiploma() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteDiploma(id, session!.accessToken),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diplomas"] });
+    },
+  });
+}
+
+export function useToggleDiplomaImmutable() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => toggleDiplomaImmutable(id, session!.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diplomas"] });
     },

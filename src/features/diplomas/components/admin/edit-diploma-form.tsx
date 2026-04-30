@@ -7,6 +7,7 @@ import { IDiploma, IUpdateDiplomaFields } from "../../types/diploma";
 import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
+import ImageUploadField from "@/shared/components/ui/image-upload-field";
 
 interface EditDiplomaFormProps {
   diploma: IDiploma;
@@ -41,10 +42,7 @@ const EditDiplomaForm = ({ diploma, onClose }: EditDiplomaFormProps) => {
   };
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex flex-col gap-4"
-    >
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <Field>
         <FieldLabel htmlFor="edit-title">Title</FieldLabel>
         <Input
@@ -70,33 +68,22 @@ const EditDiplomaForm = ({ diploma, onClose }: EditDiplomaFormProps) => {
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="edit-image">Image</FieldLabel>
-        <Input
-          id="edit-image"
-          placeholder="https://..."
-          {...form.register("image")}
+        <FieldLabel>Image</FieldLabel>
+        <ImageUploadField
+          value={form.watch("image") ?? ""}
+          onChange={(url) => form.setValue("image", url)}
         />
       </Field>
 
       {formError && (
-        <p role="alert" className="text-sm text-destructive">
-          {formError}
-        </p>
+        <p role="alert" className="text-sm text-destructive">{formError}</p>
       )}
 
       <div className="flex gap-2">
-        <Button
-          disabled={isPending}
-          className="bg-blue-600 text-white rounded-none"
-        >
+        <Button disabled={isPending} className="bg-blue-600 text-white rounded-none">
           {isPending ? "Saving…" : "Save changes"}
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className="rounded-none"
-          onClick={onClose}
-        >
+        <Button type="button" variant="outline" className="rounded-none" onClick={onClose}>
           Cancel
         </Button>
       </div>

@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { USER_ROLES } from "@/features/auth/constants/user.constant";
 
-const dashboardPrefixes = ["/diplomas", "/account", "/exams"];
+const protectedDashboardPrefixes = [
+  "/account",
+  "/exams",
+  "/answers",
+  "/submissions",
+];
 const authRoutes = new Set(["/login", "/register"]);
 const adminRoles = new Set<string>([USER_ROLES.admin, USER_ROLES.superAdmin]);
+
+function redirectGuestToRegister(request: NextRequest, pathname: string) {
+  const redirectUrl = new URL("/register", request.nextUrl.origin);
+  redirectUrl.searchParams.set("callbackUrl", pathname);
+  return NextResponse.redirect(redirectUrl);
+}
 
 export default async function proxy(request: NextRequest) {
   const jwt = await getToken({ req: request });
@@ -29,19 +40,18 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Dashboard route protection
-  if (dashboardPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+  if (
+    protectedDashboardPrefixes.some((prefix) => pathname.startsWith(prefix)) ||
+    pathname.startsWith("/diplomas/")
+  ) {
     if (!jwt) {
-      const redirectUrl = new URL("/login", request.nextUrl.origin);
-      redirectUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(redirectUrl);
+      return redirectGuestToRegister(request, pathname);
     }
     return NextResponse.next();
   }
 
-  if (pathname === "/") {
-    if (jwt)
-      return NextResponse.redirect(new URL("/diplomas", request.nextUrl.origin));
-    return NextResponse.redirect(new URL("/login", request.nextUrl.origin));
+  if (pathname === "/" || pathname === "/diploma") {
+    return NextResponse.redirect(new URL("/diplomas", request.nextUrl.origin));
   }
 
   if (authRoutes.has(pathname)) {
@@ -52,23 +62,7 @@ export default async function proxy(request: NextRequest) {
 
   return NextResponse.next();
 
-  // if (jwt) {
-  //   /*
-  //     1- Access private routes
-  //     2- Access auth routes
-  //     3- Access any other route (public)
-  //   */
 
-  //     if (privateRoutes.has(pathname)) return NextResponse.next();
-
-  //     if (authRoutes.has(pathname)) {
-  //       const redirectUrl = new URL('/dashboard', request.nextUrl.origin);
-
-  //       return NextResponse.redirect(redirectUrl)
-  //     }
-
-  //     return NextResponse.next();
-  // }
 }
 
 export const config = {

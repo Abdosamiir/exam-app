@@ -8,8 +8,10 @@ import {
 
 export async function getDiplomas(
   token?: string,
+  page: number = 1,
+  limit: number = 6,
 ): Promise<IApiResponse<IDiplomasPayload>> {
-  const res = await fetch(`${API_BASE}/diplomas`, {
+  const res = await fetch(`${API_BASE}/diplomas?page=${page}&limit=${limit}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -58,6 +60,17 @@ export async function deleteDiploma(
 ): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/diplomas/${id}`, {
     method: "DELETE",
+    headers: authHeaders(token),
+  });
+  return res.json();
+}
+
+export async function toggleDiplomaImmutable(
+  id: string,
+  token: string,
+): Promise<IApiResponse<IDiploma>> {
+  const res = await fetch(`${API_BASE}/admin/diplomas/${id}/immutable`, {
+    method: "PATCH",
     headers: authHeaders(token),
   });
   return res.json();

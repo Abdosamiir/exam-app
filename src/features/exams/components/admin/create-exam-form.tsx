@@ -5,13 +5,10 @@ import { useForm } from "react-hook-form";
 import { useCreateExam } from "../../hooks/use-exams";
 import { useDiplomas } from "@/features/diplomas/hooks/use-diplomas";
 import { ICreateExamFields } from "../../types/exam";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/shared/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
+import ImageUploadField from "@/shared/components/ui/image-upload-field";
 
 const CreateExamForm = () => {
   const [open, setOpen] = useState(false);
@@ -21,13 +18,7 @@ const CreateExamForm = () => {
   const diplomas = diplomasData?.status ? (diplomasData.payload?.data ?? []) : [];
 
   const form = useForm<ICreateExamFields>({
-    defaultValues: {
-      title: "",
-      description: "",
-      image: "",
-      duration: 30,
-      diplomaId: "",
-    },
+    defaultValues: { title: "", description: "", image: "", duration: 30, diplomaId: "" },
   });
 
   const { mutate, isPending } = useCreateExam();
@@ -49,10 +40,7 @@ const CreateExamForm = () => {
 
   if (!open) {
     return (
-      <Button
-        className="bg-blue-600 text-white rounded-none"
-        onClick={() => setOpen(true)}
-      >
+      <Button className="bg-blue-600 text-white rounded-none" onClick={() => setOpen(true)}>
         + New Exam
       </Button>
     );
@@ -92,8 +80,11 @@ const CreateExamForm = () => {
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="image">Image URL</FieldLabel>
-        <Input id="image" placeholder="https://..." {...form.register("image")} />
+        <FieldLabel>Image</FieldLabel>
+        <ImageUploadField
+          value={form.watch("image") ?? ""}
+          onChange={(url) => form.setValue("image", url)}
+        />
       </Field>
 
       <Field>
@@ -123,9 +114,7 @@ const CreateExamForm = () => {
         >
           <option value="">Select a diploma</option>
           {diplomas.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.title}
-            </option>
+            <option key={d.id} value={d.id}>{d.title}</option>
           ))}
         </select>
         {form.formState.errors.diplomaId && (

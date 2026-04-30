@@ -5,6 +5,7 @@ import { useDiplomas } from "../../hooks/use-diplomas";
 import { IDiploma } from "../../types/diploma";
 import DeleteDiplomaButton from "./delete-diploma-button";
 import EditDiplomaForm from "./edit-diploma-form";
+import ToggleDiplomaImmutableButton from "./toggle-diploma-immutable-button";
 
 const DiplomasAdminTable = () => {
   const { data, isLoading, isError } = useDiplomas();
@@ -41,6 +42,7 @@ const DiplomasAdminTable = () => {
           <tr>
             <th className="px-4 py-3">Title</th>
             <th className="px-4 py-3">Description</th>
+            <th className="px-4 py-3">Immutable</th>
             <th className="px-4 py-3">Created</th>
             <th className="px-4 py-3">Actions</th>
           </tr>
@@ -52,6 +54,9 @@ const DiplomasAdminTable = () => {
                 <td className="px-4 py-3 font-medium">{diploma.title}</td>
                 <td className="px-4 py-3 text-gray-500 max-w-xs truncate">
                   {diploma.description}
+                </td>
+                <td className="px-4 py-3">
+                  <ToggleDiplomaImmutableButton id={diploma.id} immutable={diploma.immutable} />
                 </td>
                 <td className="px-4 py-3 text-gray-400">
                   {new Date(diploma.createdAt).toLocaleDateString()}
@@ -72,7 +77,7 @@ const DiplomasAdminTable = () => {
               </tr>
               {editingId === diploma.id && (
                 <tr key={`edit-${diploma.id}`}>
-                  <td colSpan={4} className="bg-gray-50 px-4 py-4">
+                  <td colSpan={5} className="bg-gray-50 px-4 py-4">
                     <EditDiplomaForm
                       diploma={diploma}
                       onClose={() => setEditingId(null)}

@@ -1,24 +1,71 @@
-import Link from "next/link";
+import Image from "next/image";
+import { getServerSession } from "next-auth";
+import { FolderCode } from "lucide-react";
+import finalLogo from "../../../../public/final-logo.png";
+import { authOptions } from "@/shared/lib/auth";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+} from "@/shared/components/ui/sidebar";
+import { SidebarNav } from "./_components/sidebar-nav";
+import { SidebarUserMenu } from "./_components/sidebar-user-menu";
 
-const DashboardSidebar = () => {
+const DashboardSidebar = async () => {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+
   return (
-    <aside className="w-56 shrink-0 border-r bg-white px-4 py-6 flex flex-col gap-2">
-      <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
-        Dashboard
-      </p>
-      <Link
-        href="/diplomas"
-        className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-      >
-        Diplomas
-      </Link>
-      <Link
-        href="/account"
-        className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-      >
-        Account Settings
-      </Link>
-    </aside>
+    <Sidebar>
+      <SidebarHeader className="p-4">
+        <Image src={finalLogo} alt="Final Logo" priority className="w-30" />
+        <div className="flex items-center text-primary gap-2.5 text-lg font-bold tracking-tight">
+          <FolderCode className="h-6 w-6" />
+          Exam App
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent className="p-4">
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarNav />
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      {user && (
+        <SidebarFooter className="p-4">
+          <div className="flex  items-center gap-1.5">
+            {user.profilePhoto ? (
+              <Image
+                src={user.profilePhoto}
+                alt={user.firstName}
+                width={48}
+                height={48}
+                className="rounded-none border border-blue-500 object-cover"
+              />
+            ) : (
+              <div className="size-12 rounded-none bg-primary flex items-center justify-center text-white font-semibold text-sm shrink-0">
+                {user.firstName?.[0]}
+                {user.lastName?.[0]}
+              </div>
+            )}
+            <div className="flex min-w-0 flex-col items-start justify-start">
+              <span className="w-full truncate text-sm font-medium text-blue-600">
+                {user.firstName}
+              </span>
+              <span className="w-full truncate text-wrap text-xs text-muted-foreground">
+                {user.email}
+              </span>
+            </div>
+            <SidebarUserMenu role={user.role} />
+          </div>
+        </SidebarFooter>
+      )}
+    </Sidebar>
   );
 };
 

@@ -8,15 +8,19 @@ export default async function DiplomasPage() {
   const session = await getServerSession(authOptions);
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["diplomas"],
-    queryFn: () => getDiplomas(session?.accessToken),
-  });
+  if (session?.accessToken) {
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: ["diplomas", "infinite"],
+      queryFn: ({ pageParam }) =>
+        getDiplomas(session.accessToken, pageParam as number, 6),
+      initialPageParam: 1,
+    });
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold">My Diplomas</h1>
+        {/* <h1 className="text-2xl font-bold">Diplomas</h1> */}
         <DiplomasList />
       </div>
     </HydrationBoundary>

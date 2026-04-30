@@ -11,6 +11,7 @@ import {
   type StoredQuizState,
 } from "@/features/exams/components/exam-quiz";
 import { IQuestion } from "@/features/questions/types/question";
+import { FolderSearch, RotateCcw } from "lucide-react";
 
 interface SubmissionResultsProps {
   id: string;
@@ -20,8 +21,9 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
   const { data, isLoading, isError } = useSubmission(id);
 
   const submission = data?.status ? data.payload?.submission : null;
-  const analytics: ISubmissionAnalyticsItem[] =
-    data?.status ? (data.payload?.analytics ?? []) : [];
+  const analytics: ISubmissionAnalyticsItem[] = data?.status
+    ? (data.payload?.analytics ?? [])
+    : [];
 
   const storedQuestions = useMemo<IQuestion[] | null>(() => {
     if (!submission?.examId) return null;
@@ -37,11 +39,14 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex gap-6 h-[calc(100vh-120px)]">
-        <div className="w-64 shrink-0 animate-pulse rounded-2xl bg-gray-100" />
-        <div className="flex-1 flex flex-col gap-3">
+      <div className="flex flex-col gap-4 md:h-[calc(100vh-120px)] md:flex-row md:gap-6">
+        <div className="h-52 w-full shrink-0 animate-pulse rounded-none bg-gray-100 md:h-auto md:w-64" />
+        <div className="flex flex-1 flex-col gap-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-100" />
+            <div
+              key={i}
+              className="h-20 animate-pulse rounded-none bg-gray-100"
+            />
           ))}
         </div>
       </div>
@@ -65,10 +70,12 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
     submission;
 
   return (
-    <div className="flex flex-col gap-4 h-[calc(100vh-80px)]">
+    <div className="flex min-h-0 flex-col gap-4 md:h-[calc(100vh-80px)]">
       {/* Top bar */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-base font-semibold text-gray-700">{examTitle}</h1>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="min-w-0 truncate text-base font-semibold text-gray-700">
+          {examTitle}
+        </h1>
         <span className="text-sm text-gray-500">
           Question{" "}
           <span className="font-bold text-blue-600">{totalQuestions}</span> of{" "}
@@ -82,14 +89,13 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
       </div>
 
       {/* Main content */}
-      <div className="flex gap-6 flex-1 min-h-0">
+      <p className="text-lg font-bold text-blue-700 self-start">Results:</p>
+      <div className="flex flex-col gap-4 md:min-h-0 md:flex-1 md:flex-row md:gap-6">
         {/* Left panel — stats */}
-        <div className="w-64 shrink-0 rounded-2xl bg-blue-50 border border-blue-100 flex flex-col items-center justify-center gap-5 p-6">
-          <p className="text-lg font-bold text-blue-700 self-start">Results:</p>
-
+        <div className="flex w-full shrink-0 flex-col items-center justify-center gap-5 rounded-none border border-blue-100 bg-blue-50 p-4 sm:flex-row sm:p-5 md:w-64 md:flex-col md:p-6">
           <ResultsPieChart correct={correctAnswers} total={totalQuestions} />
 
-          <div className="flex flex-col gap-2.5 w-full">
+          <div className="flex w-full flex-col gap-2.5">
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <span className="h-3 w-3 rounded-sm bg-green-500 shrink-0" />
               Correct:
@@ -108,7 +114,7 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
         </div>
 
         {/* Right panel — question review */}
-        <div className="flex-1 min-h-0 rounded-2xl border border-dashed border-gray-300 bg-white p-5 overflow-y-auto">
+        <div className="w-full rounded-none border border-dashed border-gray-300 bg-white p-4 md:min-h-0 md:flex-1 md:overflow-y-auto md:p-5">
           {analytics.length > 0 ? (
             storedQuestions && storedQuestions.length > 0 ? (
               <FullQuestionReview
@@ -129,43 +135,19 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
       </div>
 
       {/* Bottom actions */}
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <Link
           href={`/exams/${examId}`}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gray-100 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-colors"
+          className="flex w-full flex-1 items-center justify-center gap-2 rounded-none border border-gray-300 bg-gray-100 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
+          <RotateCcw className="size-5" />
           Restart
         </Link>
         <Link
           href="/diplomas"
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+          className="flex w-full flex-1 items-center justify-center gap-2 rounded-none bg-blue-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-            />
-          </svg>
+          <FolderSearch className="size-5" />
           Explore
         </Link>
       </div>

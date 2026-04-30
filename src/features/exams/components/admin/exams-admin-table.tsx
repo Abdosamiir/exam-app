@@ -5,6 +5,7 @@ import { useExams } from "../../hooks/use-exams";
 import { IExam } from "../../types/exam";
 import DeleteExamButton from "./delete-exam-button";
 import EditExamForm from "./edit-exam-form";
+import ToggleExamImmutableButton from "./toggle-exam-immutable-button";
 import { useRouter } from "next/navigation";
 // import Link from "next/link";
 // import { useRouter } from "next/router";
@@ -49,6 +50,7 @@ const ExamsAdminTable = () => {
             <th className="px-4 py-3">Diploma</th>
             <th className="px-4 py-3">Duration</th>
             <th className="px-4 py-3">Questions</th>
+            <th className="px-4 py-3">Immutable</th>
             <th className="px-4 py-3">Actions</th>
           </tr>
         </thead>
@@ -72,6 +74,9 @@ const ExamsAdminTable = () => {
                   {exam.questionsCount}
                 </td>
                 <td className="px-4 py-3">
+                  <ToggleExamImmutableButton id={exam.id} immutable={exam.immutable} />
+                </td>
+                <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <button
                       className="text-blue-600 hover:underline text-xs"
@@ -87,7 +92,7 @@ const ExamsAdminTable = () => {
               </tr>
               {editingId === exam.id && (
                 <tr key={`edit-${exam.id}`}>
-                  <td colSpan={5} className="bg-gray-50 px-4 py-4">
+                  <td colSpan={6} className="bg-gray-50 px-4 py-4">
                     <EditExamForm
                       exam={exam}
                       onClose={() => setEditingId(null)}

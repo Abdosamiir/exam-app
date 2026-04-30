@@ -2,6 +2,7 @@
 export interface IAnswer {
   id: string;
   text: string;
+  isCorrect: boolean;
 }
 
 // Question as returned in GET /api/questions/exam/{examId} and GET /api/questions/{id}
@@ -27,6 +28,7 @@ export interface IQuestionDetailPayload {
 
 export interface IAnswerInput {
   text: string;
+  isCorrect: boolean;
 }
 
 // POST /api/questions

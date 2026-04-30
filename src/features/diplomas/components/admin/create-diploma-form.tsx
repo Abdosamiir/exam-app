@@ -7,6 +7,7 @@ import { ICreateDiplomaFields } from "../../types/diploma";
 import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
+import ImageUploadField from "@/shared/components/ui/image-upload-field";
 
 const CreateDiplomaForm = () => {
   const [formError, setFormError] = useState<string | null>(null);
@@ -69,9 +70,7 @@ const CreateDiplomaForm = () => {
         <Input
           id="description"
           placeholder="Description"
-          {...form.register("description", {
-            required: "Description is required",
-          })}
+          {...form.register("description", { required: "Description is required" })}
           aria-invalid={!!form.formState.errors.description}
         />
         {form.formState.errors.description && (
@@ -80,35 +79,26 @@ const CreateDiplomaForm = () => {
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="image">Image</FieldLabel>
-        <Input
-          id="image"
-          placeholder="https://..."
-          {...form.register("image")}
+        <FieldLabel>Image</FieldLabel>
+        <ImageUploadField
+          value={form.watch("image") ?? ""}
+          onChange={(url) => form.setValue("image", url)}
         />
       </Field>
 
       {formError && (
-        <p role="alert" className="text-sm text-destructive">
-          {formError}
-        </p>
+        <p role="alert" className="text-sm text-destructive">{formError}</p>
       )}
 
       <div className="flex gap-2">
-        <Button
-          disabled={isPending}
-          className="bg-blue-600 text-white rounded-none"
-        >
+        <Button disabled={isPending} className="bg-blue-600 text-white rounded-none">
           {isPending ? "Creating…" : "Create"}
         </Button>
         <Button
           type="button"
           variant="outline"
           className="rounded-none"
-          onClick={() => {
-            setOpen(false);
-            form.reset();
-          }}
+          onClick={() => { setOpen(false); form.reset(); }}
         >
           Cancel
         </Button>

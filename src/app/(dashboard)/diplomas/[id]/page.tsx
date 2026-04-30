@@ -35,17 +35,8 @@ export default async function DiplomaExamsPage({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/diplomas"
-            className="text-sm text-blue-600 hover:underline underline-offset-4"
-          >
-            ← Diplomas
-          </Link>
-        </div>
-
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">{diploma?.title ?? "Exams"}</h1>
+        
           {diploma?.description && (
             <p className="text-sm text-gray-500">{diploma.description}</p>
           )}

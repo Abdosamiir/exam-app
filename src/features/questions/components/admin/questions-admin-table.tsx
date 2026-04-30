@@ -5,6 +5,7 @@ import { useQuestions } from "../../hooks/use-questions";
 import { IQuestion } from "../../types/question";
 import DeleteQuestionButton from "./delete-question-button";
 import EditQuestionForm from "./edit-question-form";
+import ToggleQuestionImmutableButton from "./toggle-question-immutable-button";
 
 interface QuestionsAdminTableProps {
   examId: string;
@@ -62,15 +63,11 @@ const QuestionsAdminTable = ({ examId }: QuestionsAdminTableProps) => {
                   {question.answers.length}
                 </td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                      question.immutable
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-green-100 text-green-700"
-                    }`}
-                  >
-                    {question.immutable ? "Yes" : "No"}
-                  </span>
+                  <ToggleQuestionImmutableButton
+                    id={question.id}
+                    examId={examId}
+                    immutable={question.immutable}
+                  />
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">

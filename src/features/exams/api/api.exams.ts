@@ -69,3 +69,14 @@ export async function getExamById(
   });
   return res.json();
 }
+
+export async function toggleExamImmutable(
+  id: string,
+  token: string,
+): Promise<IApiResponse<IExam>> {
+  const res = await fetch(`${API_BASE}/admin/exams/${id}/immutable`, {
+    method: "PATCH",
+    headers: authHeaders(token),
+  });
+  return res.json();
+}
