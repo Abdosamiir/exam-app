@@ -38,7 +38,7 @@ const CreateDiplomaForm = () => {
   if (!open) {
     return (
       <Button
-        className="bg-emerald-500 text-white rounded-none"
+        className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-none"
         onClick={() => setOpen(true)}
       >
         <Plus className="h-4 w-4" />

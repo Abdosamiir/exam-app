@@ -27,19 +27,19 @@ const DiplomasPagination = () => {
   };
 
   return (
-    <div className="flex items-center justify-between text-sm text-gray-600">
+    <div className="flex gap-2 items-center justify-between text-sm text-gray-600">
       <span>
         {start} – {end} of {metadata.total}
       </span>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 border border-gray-200 h-10 ">
         <button
           type="button"
           onClick={() => goTo(Math.max(1, page - 1))}
           disabled={page <= 1}
-          className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="bg-gray-300 h-full w-8 flex justify-center items-center  hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
           aria-label="Previous page"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} className="" />
         </button>
         <span className="px-3">
           Page {page} of {metadata.totalPages}
@@ -48,7 +48,7 @@ const DiplomasPagination = () => {
           type="button"
           onClick={() => goTo(Math.min(metadata.totalPages, page + 1))}
           disabled={page >= metadata.totalPages}
-          className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          className=" bg-gray-300 h-full w-8 flex justify-center items-center hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
           aria-label="Next page"
         >
           <ChevronRight size={16} />
