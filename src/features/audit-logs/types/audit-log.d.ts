@@ -27,3 +27,8 @@ export interface IAuditLogsPayload {
   data: IAuditLog[];
   metadata: IAuditLogsMetadata;
 }
+
+export interface IAuditLogDetailPayload extends Partial<IAuditLog> {
+  auditLog?: IAuditLog;
+  log?: IAuditLog;
+}

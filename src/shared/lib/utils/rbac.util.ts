@@ -14,6 +14,8 @@ const POLICIES = {
     "update:exams",
     "delete:exams",
     "toggle-immutable:exams",
+    "view:audit-logs",
+    "delete:audit-logs",
   ],
   [USER_ROLES.owner]: [
     "view:diplomas",
@@ -24,6 +26,8 @@ const POLICIES = {
     "create:exams",
     "update:exams",
     "delete:exams",
+    "view:audit-logs",
+    "delete:audit-logs",
   ],
   [USER_ROLES.admin]: [
     "view:diplomas",
@@ -32,6 +36,7 @@ const POLICIES = {
     "view:exams",
     "create:exams",
     "update:exams",
+    "view:audit-logs",
   ],
   [USER_ROLES.user]: [
     "view:diplomas",

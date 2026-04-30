@@ -5,14 +5,24 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteAllAuditLogs,
   deleteAuditLog,
+  getAuditLogById,
   getAuditLogs,
 } from "../api/api.audit-logs";
 
-export function useAuditLogs(page: number = 1) {
+export function useAuditLogs(page: number = 1, limit: number = 20) {
   const { data: session } = useSession();
   return useQuery({
-    queryKey: ["audit-logs", page],
-    queryFn: () => getAuditLogs(session?.accessToken, page),
+    queryKey: ["audit-logs", page, limit],
+    queryFn: () => getAuditLogs(session?.accessToken, page, limit),
+  });
+}
+
+export function useAuditLog(id: string) {
+  const { data: session } = useSession();
+  return useQuery({
+    queryKey: ["audit-logs", id],
+    queryFn: () => getAuditLogById(id, session?.accessToken),
+    enabled: !!id,
   });
 }
 

@@ -1,5 +1,5 @@
 import { API_BASE, authHeaders } from "@/shared/lib/utils/api.util";
-import { IAuditLogsPayload } from "../types/audit-log";
+import { IAuditLogDetailPayload, IAuditLogsPayload } from "../types/audit-log";
 
 export async function getAuditLogs(
   token?: string,
@@ -10,6 +10,17 @@ export async function getAuditLogs(
     `${API_BASE}/admin/audit-logs?page=${page}&limit=${limit}`,
     { headers: authHeaders(token), cache: "no-store" },
   );
+  return res.json();
+}
+
+export async function getAuditLogById(
+  id: string,
+  token?: string,
+): Promise<IApiResponse<IAuditLogDetailPayload>> {
+  const res = await fetch(`${API_BASE}/admin/audit-logs/${id}`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
   return res.json();
 }
 
