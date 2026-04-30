@@ -2,17 +2,16 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useDiplomas } from "../../hooks/use-diplomas";
+import { useExams } from "../../hooks/use-exams";
 
 const LIMIT = 20;
 
-const DiplomasPagination = () => {
+const ExamsPagination = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page") ?? "1");
-
-  const { data } = useDiplomas(page, LIMIT);
+  const { data } = useExams(undefined, page, LIMIT);
   const metadata = data?.status ? data.payload?.metadata : undefined;
 
   if (!metadata || metadata.total === 0) return null;
@@ -20,26 +19,26 @@ const DiplomasPagination = () => {
   const start = (page - 1) * LIMIT + 1;
   const end = Math.min(page * LIMIT, metadata.total);
 
-  const goTo = (p: number) => {
+  const goTo = (nextPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(p));
+    params.set("page", String(nextPage));
     router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
-    <div className="flex gap-2 items-center justify-between text-sm text-gray-600">
+    <div className="flex items-center justify-between gap-2 text-sm text-gray-600">
       <span>
-        {start} – {end} of {metadata.total}
+        {start} - {end} of {metadata.total}
       </span>
-      <div className="flex items-center gap-1 border border-gray-200 h-10 ">
+      <div className="flex h-10 items-center gap-1 border border-gray-200">
         <button
           type="button"
           onClick={() => goTo(Math.max(1, page - 1))}
           disabled={page <= 1}
-          className="bg-gray-300 h-full w-8 flex justify-center items-center  hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex h-full w-8 items-center justify-center bg-gray-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Previous page"
         >
-          <ChevronLeft size={16} className="" />
+          <ChevronLeft size={16} />
         </button>
         <span className="px-3">
           Page {page} of {metadata.totalPages}
@@ -48,7 +47,7 @@ const DiplomasPagination = () => {
           type="button"
           onClick={() => goTo(Math.min(metadata.totalPages, page + 1))}
           disabled={page >= metadata.totalPages}
-          className=" bg-gray-300 h-full w-8 flex justify-center items-center hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex h-full w-8 items-center justify-center bg-gray-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Next page"
         >
           <ChevronRight size={16} />
@@ -58,4 +57,4 @@ const DiplomasPagination = () => {
   );
 };
 
-export default DiplomasPagination;
+export default ExamsPagination;

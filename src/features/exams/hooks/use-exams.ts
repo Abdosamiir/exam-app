@@ -37,11 +37,11 @@ export function useInfiniteExams(diplomaId?: string) {
   });
 }
 
-export function useExams(diplomaId?: string) {
+export function useExams(diplomaId?: string, page?: number, limit?: number) {
   const { data: session } = useSession();
   return useQuery({
-    queryKey: ["exams", diplomaId ?? "all"],
-    queryFn: () => getExams({ diplomaId }, session?.accessToken),
+    queryKey: ["exams", diplomaId ?? "all", page, limit],
+    queryFn: () => getExams({ diplomaId, page, limit }, session?.accessToken),
   });
 }
 

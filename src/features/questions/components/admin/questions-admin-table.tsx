@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useQuestions } from "../../hooks/use-questions";
 import { IQuestion } from "../../types/question";
 import DeleteQuestionButton from "./delete-question-button";
@@ -53,8 +53,8 @@ const QuestionsAdminTable = ({ examId }: QuestionsAdminTableProps) => {
         </thead>
         <tbody className="divide-y bg-white">
           {questions.map((question, index) => (
-            <>
-              <tr key={question.id} className="hover:bg-gray-50">
+            <Fragment key={question.id}>
+              <tr className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-gray-400">{index + 1}</td>
                 <td className="px-4 py-3 font-medium max-w-sm truncate">
                   {question.text}
@@ -95,7 +95,7 @@ const QuestionsAdminTable = ({ examId }: QuestionsAdminTableProps) => {
                   </td>
                 </tr>
               )}
-            </>
+            </Fragment>
           ))}
         </tbody>
       </table>

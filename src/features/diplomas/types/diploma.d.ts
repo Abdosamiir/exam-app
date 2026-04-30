@@ -12,6 +12,10 @@ export interface IDiploma {
   }
 }
 
+export interface IDiplomaDetailPayload extends Partial<IDiploma> {
+  diploma?: IDiploma;
+}
+
 export interface IDiplomaMetadata {
   page: number;
   limit: number;

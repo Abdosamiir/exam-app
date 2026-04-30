@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { Button } from "@/shared/components/ui/button";
-import { USER_ROLES } from "@/features/auth/constants/user.constant";
+import { hasPermission } from "@/shared/lib/utils/rbac.util";
 import { useToggleDiplomaImmutable } from "../../hooks/use-diplomas";
 
 interface Props {
@@ -14,7 +14,7 @@ const ToggleDiplomaImmutableButton = ({ id, immutable }: Props) => {
   const { data: session } = useSession();
   const { mutate, isPending } = useToggleDiplomaImmutable();
 
-  if (session?.user.role !== USER_ROLES.superAdmin) return null;
+  if (!hasPermission("toggle-immutable:diplomas", session?.user.role)) return null;
 
   return (
     <Button
