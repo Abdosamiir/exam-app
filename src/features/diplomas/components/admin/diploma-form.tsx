@@ -13,6 +13,7 @@ import {
   IUpdateDiplomaFields,
 } from "../../types/diploma";
 import { useCreateDiploma, useUpdateDiploma } from "../../hooks/use-diplomas";
+import { Save, X } from "lucide-react";
 
 type DiplomaFormValues = ICreateDiplomaFields & IUpdateDiplomaFields;
 
@@ -71,8 +72,47 @@ const DiplomaForm = ({ diploma, mode }: DiplomaFormProps) => {
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex max-w-2xl flex-col gap-5"
+      className="flex max-w-full flex-col gap-5"
     >
+      <div className="flex flex-row-reverse gap-2">
+        <Button
+          disabled={isPending}
+          className="rounded-none bg-emerald-600 hover:bg-emerald-700 text-white"
+        >
+          <Save size={14} className="text-white" />
+          {isPending
+            ? mode === "create"
+              ? "Creating..."
+              : "Saving..."
+            : mode === "create"
+              ? "Create"
+              : "Save "}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="rounded-none bg-gray-200 hover:bg-gray-300"
+          onClick={() => router.back()}
+        >
+          <X size={14} className="text-gray-800" />
+          Cancel
+        </Button>
+      </div>
+      <div className=" font-semibold w-full px-4 py-2 bg-blue-600 text-white capitalize">
+        Diploma Information
+      </div>
+      <Field>
+        <FieldLabel>Image</FieldLabel>
+        <ImageUploadField
+          value={image ?? ""}
+          onChange={(url) =>
+            form.setValue("image", url, {
+              shouldDirty: true,
+              shouldValidate: true,
+            })
+          }
+        />
+      </Field>
       <Field>
         <FieldLabel htmlFor="title">Title</FieldLabel>
         <Input
@@ -101,47 +141,11 @@ const DiplomaForm = ({ diploma, mode }: DiplomaFormProps) => {
         )}
       </Field>
 
-      <Field>
-        <FieldLabel>Image</FieldLabel>
-        <ImageUploadField
-          value={image ?? ""}
-          onChange={(url) =>
-            form.setValue("image", url, {
-              shouldDirty: true,
-              shouldValidate: true,
-            })
-          }
-        />
-      </Field>
-
       {formError && (
         <p role="alert" className="text-sm text-destructive">
           {formError}
         </p>
       )}
-
-      <div className="flex gap-2">
-        <Button
-          disabled={isPending}
-          className="rounded-none bg-blue-600 text-white"
-        >
-          {isPending
-            ? mode === "create"
-              ? "Creating..."
-              : "Saving..."
-            : mode === "create"
-              ? "Create"
-              : "Save changes"}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className="rounded-none"
-          onClick={() => router.back()}
-        >
-          Cancel
-        </Button>
-      </div>
     </form>
   );
 };

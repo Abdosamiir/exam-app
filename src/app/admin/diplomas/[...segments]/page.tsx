@@ -19,10 +19,14 @@ import {
   IDiplomaDetailPayload,
 } from "@/features/diplomas/types/diploma";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
+import { Pencil, PenLine, Trash, Trash2 } from "lucide-react";
 
 type DiplomaRouteMode = "create" | "view" | "edit" | "delete";
 
-function resolveRoute(segments: string[]): { mode: DiplomaRouteMode; id?: string } {
+function resolveRoute(segments: string[]): {
+  mode: DiplomaRouteMode;
+  id?: string;
+} {
   if (segments.length === 1 && segments[0] === "add") {
     return { mode: "create" };
   }
@@ -102,7 +106,8 @@ export default async function AdminDiplomaCatchAllPage({
   }
 
   if (!hasPermission("view:diplomas", role)) notFound();
-  if (route.mode === "edit" && !hasPermission("update:diplomas", role)) notFound();
+  if (route.mode === "edit" && !hasPermission("update:diplomas", role))
+    notFound();
   if (route.mode === "delete" && !hasPermission("delete:diplomas", role)) {
     notFound();
   }
@@ -121,13 +126,25 @@ export default async function AdminDiplomaCatchAllPage({
                   immutable={diploma.immutable}
                 />
                 {hasPermission("update:diplomas", role) && (
-                  <Button asChild variant="outline" className="rounded-none">
-                    <Link href={`/admin/diplomas/${diploma.id}/edit`}>Edit</Link>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                  >
+                    <Link href={`/admin/diplomas/${diploma.id}/edit`}>
+                      <PenLine size={14} className="text-white" />
+                      Edit
+                    </Link>
                   </Button>
                 )}
                 {hasPermission("delete:diplomas", role) && (
-                  <Button asChild variant="destructive" className="rounded-none">
+                  <Button
+                    asChild
+                    variant="destructive"
+                    className="rounded-none"
+                  >
                     <Link href={`/admin/diplomas/${diploma.id}/delete`}>
+                      <Trash2 size={14} className="text-white" />
                       Delete
                     </Link>
                   </Button>
@@ -135,8 +152,8 @@ export default async function AdminDiplomaCatchAllPage({
               </div>
             </div>
 
-            <div className="grid max-w-5xl gap-6 md:grid-cols-[320px_1fr]">
-              <div className="aspect-square overflow-hidden border bg-gray-50">
+            <div className="flex flex-col max-w-5xl gap-6 ">
+              <div className="aspect-square w-80 overflow-hidden border bg-gray-50">
                 {diploma.image ? (
                   <Image
                     src={diploma.image}
@@ -161,7 +178,7 @@ export default async function AdminDiplomaCatchAllPage({
 
         {route.mode === "edit" && (
           <>
-            <h1 className="text-2xl font-bold">Edit {diploma.title}</h1>
+            {/* <h1 className="text-2xl font-bold">Edit {diploma.title}</h1> */}
             <DiplomaForm diploma={diploma} mode="edit" />
           </>
         )}

@@ -189,7 +189,7 @@ const DiplomaRow = ({ diploma }: { diploma: IDiploma }) => {
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm text-gray-500">{diploma.description}</p>
+        <p className="truncate max-w-xl text-sm text-gray-500">{diploma.description}</p>
       </div>
 
       <DiplomaRowMenu diploma={diploma} />
