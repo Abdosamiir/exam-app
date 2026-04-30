@@ -35,11 +35,11 @@ export function useInfiniteDiplomas() {
   });
 }
 
-export function useDiplomas() {
+export function useDiplomas(page = 1, limit = 20) {
   const { data: session } = useSession();
   return useQuery({
-    queryKey: ["diplomas"],
-    queryFn: () => getDiplomas(session?.accessToken),
+    queryKey: ["diplomas", page, limit],
+    queryFn: () => getDiplomas(session?.accessToken, page, limit),
   });
 }
 

@@ -8,6 +8,7 @@ import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import ImageUploadField from "@/shared/components/ui/image-upload-field";
+import { Plus } from "lucide-react";
 
 const CreateDiplomaForm = () => {
   const [formError, setFormError] = useState<string | null>(null);
@@ -37,10 +38,11 @@ const CreateDiplomaForm = () => {
   if (!open) {
     return (
       <Button
-        className="bg-blue-600 text-white rounded-none"
+        className="bg-emerald-500 text-white rounded-none"
         onClick={() => setOpen(true)}
       >
-        + New Diploma
+        <Plus className="h-4 w-4" />
+        add new diploma
       </Button>
     );
   }
@@ -70,7 +72,9 @@ const CreateDiplomaForm = () => {
         <Input
           id="description"
           placeholder="Description"
-          {...form.register("description", { required: "Description is required" })}
+          {...form.register("description", {
+            required: "Description is required",
+          })}
           aria-invalid={!!form.formState.errors.description}
         />
         {form.formState.errors.description && (
@@ -87,18 +91,26 @@ const CreateDiplomaForm = () => {
       </Field>
 
       {formError && (
-        <p role="alert" className="text-sm text-destructive">{formError}</p>
+        <p role="alert" className="text-sm text-destructive">
+          {formError}
+        </p>
       )}
 
       <div className="flex gap-2">
-        <Button disabled={isPending} className="bg-blue-600 text-white rounded-none">
+        <Button
+          disabled={isPending}
+          className="bg-blue-600 text-white rounded-none"
+        >
           {isPending ? "Creating…" : "Create"}
         </Button>
         <Button
           type="button"
           variant="outline"
           className="rounded-none"
-          onClick={() => { setOpen(false); form.reset(); }}
+          onClick={() => {
+            setOpen(false);
+            form.reset();
+          }}
         >
           Cancel
         </Button>

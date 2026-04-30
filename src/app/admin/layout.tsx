@@ -11,7 +11,7 @@ export default function AdminLayout({
     <SidebarProvider style={{ "--sidebar": "#1f2937" } as React.CSSProperties}>
       {sidebar}
       <SidebarInset>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 ">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

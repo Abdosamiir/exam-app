@@ -4,7 +4,8 @@
       "Bash(npx tsc *)",
       "Bash(node -e \"const pkg = require\\('./node_modules/radix-ui/package.json'\\); console.log\\(Object.keys\\(pkg.exports || {}\\).filter\\(k => k.includes\\('dialog'\\) || k.includes\\('alert'\\)\\)\\)\")",
       "Bash(node -e \"const pkg = require\\('./node_modules/radix-ui/package.json'\\); const keys = Object.keys\\(pkg.exports || {}\\); console.log\\(keys.slice\\(0, 50\\).join\\('\\\\n'\\)\\)\")",
-      "Bash(node -e \"const pkg = require\\('./node_modules/@radix-ui/react-one-time-password-field/package.json'\\); console.log\\(pkg.version, JSON.stringify\\(Object.keys\\(pkg.exports || {}\\)\\)\\)\")"
+      "Bash(node -e \"const pkg = require\\('./node_modules/@radix-ui/react-one-time-password-field/package.json'\\); console.log\\(pkg.version, JSON.stringify\\(Object.keys\\(pkg.exports || {}\\)\\)\\)\")",
+      "Bash(npx shadcn@latest add select --yes)"
     ]
   }
 }
