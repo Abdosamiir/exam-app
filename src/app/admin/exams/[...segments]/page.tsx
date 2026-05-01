@@ -18,6 +18,8 @@ import ToggleExamImmutableButton from "@/features/exams/components/admin/toggle-
 import { IExamDetail, IExamDetailPayload } from "@/features/exams/types/exam";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
 import { PenLine, Trash2 } from "lucide-react";
+import { getQuestionsByExam } from "@/features/questions/api/api.questions";
+import QuestionsAdminTable from "@/features/questions/components/admin/questions-admin-table";
 
 type ExamRouteMode = "create" | "view" | "edit" | "delete";
 
@@ -55,6 +57,10 @@ async function getRouteExam(id: string, token?: string) {
     queryClient.prefetchQuery({
       queryKey: ["diplomas", 1, 20],
       queryFn: () => getDiplomas(token, 1, 20),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["questions", "exam", id],
+      queryFn: () => getQuestionsByExam(id, token),
     }),
   ]);
 
@@ -130,11 +136,6 @@ export default async function AdminExamCatchAllPage({
                   id={exam.id}
                   immutable={exam.immutable}
                 />
-                <Button asChild variant="outline" className="rounded-none">
-                  <Link href={`/admin/exams/${exam.id}/questions`}>
-                    Questions
-                  </Link>
-                </Button>
                 {hasPermission("update:exams", role) && (
                   <Button
                     asChild
@@ -154,7 +155,6 @@ export default async function AdminExamCatchAllPage({
                     className="rounded-none"
                   >
                     <Link href={`/admin/exams/${exam.id}/delete`}>
-                     
                       <Trash2 /> Delete
                     </Link>
                   </Button>
@@ -181,7 +181,7 @@ export default async function AdminExamCatchAllPage({
                 <p className="text-sm leading-6 text-gray-600">
                   {exam.description}
                 </p>
-                {/* <div className="grid gap-2 text-sm text-gray-600 sm:grid-cols-2"> */}
+
                 <p>
                   <span className="font-medium text-gray-900">Diploma:</span>{" "}
                   {exam.diploma.title}
@@ -194,16 +194,49 @@ export default async function AdminExamCatchAllPage({
                   <span className="font-medium text-gray-900">Questions:</span>{" "}
                   {exam.questionsCount}
                 </p>
-                {/* </div> */}
               </div>
+            </div>
+
+            <div className="flex flex-col ">
+              <div className="flex items-center justify-between bg-blue-600 pl-4 text-white ">
+                <h2 className="text-xl font-semibold">Exam Questions</h2>
+                {hasPermission("create:exams", role) && (
+                  <Button
+                    asChild
+                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    <Link href={`/admin/exams/${exam.id}/questions/add`}>
+                      + Add Question
+                    </Link>
+                  </Button>
+                )}
+              </div>
+              <QuestionsAdminTable examId={exam.id} />
             </div>
           </>
         )}
 
         {route.mode === "edit" && (
           <>
-            <h1 className="text-2xl font-bold">Edit {exam.title}</h1>
+            
             <ExamForm exam={exam} mode="edit" />
+
+            <div className="flex flex-col ">
+              <div className="flex items-center justify-between  bg-blue-600 pl-4 text-white ">
+                <h2 className="text-xl font-semibold">Exam Questions</h2>
+                {hasPermission("create:exams", role) && (
+                  <Button
+                    asChild
+                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    <Link href={`/admin/exams/${exam.id}/questions/add`}>
+                      + Add Question
+                    </Link>
+                  </Button>
+                )}
+              </div>
+              <QuestionsAdminTable examId={exam.id} />
+            </div>
           </>
         )}
 

@@ -16,6 +16,7 @@ import {
 import { SidebarTrigger } from "@/shared/components/ui/sidebar";
 import { getDiplomaById } from "@/features/diplomas/api/api.diplomas";
 import { getExamById } from "@/features/exams/api/api.exams";
+import { getQuestionById } from "@/features/questions/api/api.questions";
 import { getSubmissionById } from "@/features/submissions/api/api.submissions";
 
 type BreadcrumbEntry = {
@@ -39,6 +40,28 @@ function DiplomaSegmentLabel({ id }: { id: string }) {
     ? (data.payload?.title ?? data.payload?.diploma?.title)
     : undefined;
   return title;
+}
+
+function ExamSegmentLabel({ id }: { id: string }) {
+  const { data: session } = useSession();
+  const { data } = useQuery({
+    queryKey: ["exams", "detail", id],
+    queryFn: () => getExamById(id, session!.accessToken),
+    enabled: !!id && !!session?.accessToken,
+  });
+
+  return data?.status ? (data.payload?.exam?.title ?? id) : id;
+}
+
+function QuestionSegmentLabel({ id }: { id: string }) {
+  const { data: session } = useSession();
+  const { data } = useQuery({
+    queryKey: ["questions", "detail", id],
+    queryFn: () => getQuestionById(id, session!.accessToken),
+    enabled: !!id && !!session?.accessToken,
+  });
+
+  return data?.status ? (data.payload?.question?.text ?? id) : id;
 }
 
 function BreadcrumbTrail({ items }: { items: BreadcrumbEntry[] }) {
@@ -131,12 +154,21 @@ function SubmissionBreadcrumbTrail({ id }: { id: string }) {
   return <BreadcrumbTrail items={items} />;
 }
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function resolveLabel(
   segment: string,
   parentSegment: string | undefined,
 ): React.ReactNode {
   if (parentSegment === "diplomas") {
     return <DiplomaSegmentLabel id={segment} />;
+  }
+  if (parentSegment === "exams" && UUID_RE.test(segment)) {
+    return <ExamSegmentLabel id={segment} />;
+  }
+  if (parentSegment === "questions" && UUID_RE.test(segment)) {
+    return <QuestionSegmentLabel id={segment} />;
   }
   return formatSegment(segment);
 }

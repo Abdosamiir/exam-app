@@ -23,6 +23,7 @@ import {
   IExamDetail,
   IUpdateExamFields,
 } from "../../types/exam";
+import { Save, X } from "lucide-react";
 
 type ExamFormValues = ICreateExamFields & IUpdateExamFields;
 
@@ -35,7 +36,9 @@ const ExamForm = ({ exam, mode }: ExamFormProps) => {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const { data: diplomasData } = useDiplomas();
-  const diplomas = diplomasData?.status ? (diplomasData.payload?.data ?? []) : [];
+  const diplomas = diplomasData?.status
+    ? (diplomasData.payload?.data ?? [])
+    : [];
   const createExam = useCreateExam();
   const updateExam = useUpdateExam(exam?.id ?? "");
   const isPending = createExam.isPending || updateExam.isPending;
@@ -84,6 +87,33 @@ const ExamForm = ({ exam, mode }: ExamFormProps) => {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-full">
+      <h1 className="text-2xl font-bold flex items-center justify-between gap-3 pb-4">
+        Edit {exam?.title}{" "}
+        <div className="flex items-center flex-row-reverse gap-3  bg-muted/30 ">
+          <Button
+            disabled={isPending}
+            className="rounded-none bg-emerald-600 text-white hover:bg-emerald-700"
+          >
+            <Save size={14} />
+            {isPending
+              ? mode === "create"
+                ? "Creating..."
+                : "Saving..."
+              : mode === "create"
+                ? "Create Exam"
+                : "Save "}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-none bg-gray-200"
+            onClick={() => router.back()}
+          >
+            <X size={14} />
+            Cancel
+          </Button>
+        </div>
+      </h1>
       <div className="overflow-hidden border border-border shadow-sm">
         <div className="bg-blue-600 px-6 py-3">
           <h2 className="text-sm font-semibold tracking-wide text-white uppercase">
@@ -118,7 +148,8 @@ const ExamForm = ({ exam, mode }: ExamFormProps) => {
                       id="diplomaId"
                       className={cn(
                         "w-full",
-                        form.formState.errors.diplomaId && "aria-invalid:border-destructive",
+                        form.formState.errors.diplomaId &&
+                          "aria-invalid:border-destructive",
                       )}
                       aria-invalid={!!form.formState.errors.diplomaId}
                     >
@@ -199,29 +230,6 @@ const ExamForm = ({ exam, mode }: ExamFormProps) => {
               {formError}
             </p>
           )}
-        </div>
-
-        <div className="flex items-center gap-3 border-t border-border bg-muted/30 px-6 py-4">
-          <Button
-            disabled={isPending}
-            className="rounded-none bg-blue-600 text-white hover:bg-blue-700"
-          >
-            {isPending
-              ? mode === "create"
-                ? "Creating..."
-                : "Saving..."
-              : mode === "create"
-                ? "Create Exam"
-                : "Save Changes"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="rounded-none"
-            onClick={() => router.back()}
-          >
-            Cancel
-          </Button>
         </div>
       </div>
     </form>
