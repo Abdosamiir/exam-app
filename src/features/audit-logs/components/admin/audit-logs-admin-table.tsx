@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
+  AlertTriangle,
   ArrowDownAZ,
   ArrowDownWideNarrow,
   ArrowUpAZ,
@@ -15,7 +16,13 @@ import {
 } from "lucide-react";
 import { TRole } from "@/features/auth/types/user";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
-import { useAuditLogs } from "../../hooks/use-audit-logs";
+import { Button } from "@/shared/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+} from "@/shared/components/ui/dialog";
+import { useAuditLogs, useDeleteAuditLog } from "../../hooks/use-audit-logs";
 import { IAuditLog } from "../../types/audit-log";
 
 // ─── Style maps ───────────────────────────────────────────────────────────────
@@ -136,7 +143,6 @@ const SortDropdown = ({
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const current = SORT_OPTIONS.find((o) => o.value === sort);
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
@@ -190,52 +196,115 @@ const SortDropdown = ({
 // ─── Row menu ─────────────────────────────────────────────────────────────────
 
 const AuditLogRowMenu = ({ log, role }: { log: IAuditLog; role?: TRole }) => {
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const canDelete = hasPermission("delete:audit-logs", role);
   const ref = useRef<HTMLDivElement>(null);
+  const { mutate, isPending } = useDeleteAuditLog();
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
+        setMenuOpen(false);
     };
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
-  return (
-    <div className="relative shrink-0" ref={ref}>
-      <button
-        type="button"
-        className="bg-gray-200 p-1.5 text-gray-800 hover:bg-gray-100 hover:text-gray-700"
-        onClick={() => setOpen((v) => !v)}
-      >
-        <MoreHorizontal size={16} />
-      </button>
+  const handleDelete = () => {
+    mutate(log.id, {
+      onSuccess: (res) => {
+        if (!res.status) {
+          setDeleteError(res.message ?? "Failed to delete audit log.");
+          return;
+        }
+        setDialogOpen(false);
+      },
+      onError: () => setDeleteError("Something went wrong. Please try again."),
+    });
+  };
 
-      {open && (
-        <div className="absolute right-0 top-8 z-20 w-40 rounded-md border bg-white py-1 shadow-lg">
-          <Link
-            href={`/admin/audit-log/${log.id}`}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            onClick={() => setOpen(false)}
-          >
-            <Eye size={14} className="text-green-500" />
-            View
-          </Link>
-          {canDelete && (
+  return (
+    <>
+      <div className="relative shrink-0" ref={ref}>
+        <button
+          type="button"
+          className="bg-gray-200 p-1.5 text-gray-800 hover:bg-gray-100 hover:text-gray-700"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <MoreHorizontal size={16} />
+        </button>
+
+        {menuOpen && (
+          <div className="absolute right-0 top-8 z-20 w-40 rounded-md border bg-white py-1 shadow-lg">
             <Link
-              href={`/admin/audit-log/${log.id}/delete`}
+              href={`/admin/audit-log/${log.id}`}
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-              onClick={() => setOpen(false)}
+              onClick={() => setMenuOpen(false)}
             >
-              <Trash2 size={14} className="text-red-500" />
-              Delete
+              <Eye size={14} className="text-green-500" />
+              View
             </Link>
+            {canDelete && (
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                onClick={() => {
+                  setDeleteError(null);
+                  setMenuOpen(false);
+                  setDialogOpen(true);
+                }}
+              >
+                <Trash2 size={14} className="text-red-500" />
+                Delete
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-sm px-8 py-10 text-center">
+          <div className="mb-5 flex justify-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
+              <AlertTriangle className="h-9 w-9 text-red-500" />
+            </div>
+          </div>
+
+          <h2 className="mb-2 text-base font-bold text-red-600">
+            Are you sure you want to delete this log?
+          </h2>
+          <p className="mb-6 text-sm text-gray-500">
+            This action is permanent and cannot be undone.
+          </p>
+
+          {deleteError && (
+            <p className="mb-4 text-sm text-red-500">{deleteError}</p>
           )}
-        </div>
-      )}
-    </div>
+
+          <div className="flex gap-3">
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="flex-1 rounded-none"
+                disabled={isPending}
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              variant="destructive"
+              className="flex-1 rounded-none"
+              disabled={isPending}
+              onClick={handleDelete}
+            >
+              {isPending ? "Deleting..." : "Yes, delete"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
@@ -336,8 +405,9 @@ const LIMIT = 20;
 const AuditLogsAdminTable = ({ role }: { role?: TRole }) => {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page") ?? "1");
-  const search = (searchParams.get("search") ?? "").toLowerCase().trim();
+  const category = searchParams.get("category");
   const action = searchParams.get("action");
+  const user = searchParams.get("user");
   const [sort, setSort] = useState<SortKey>("newest");
 
   const { data, isLoading, isError } = useAuditLogs(page, LIMIT);
@@ -361,22 +431,16 @@ const AuditLogsAdminTable = ({ role }: { role?: TRole }) => {
   }
 
   const filtered: IAuditLog[] = (data.payload?.data ?? []).filter((log) => {
-    const matchesSearch =
-      !search ||
-      log.actorUsername.toLowerCase().includes(search) ||
-      log.actorEmail.toLowerCase().includes(search) ||
-      log.actorRole?.toLowerCase().includes(search) ||
-      log.category.toLowerCase().includes(search) ||
-      log.entityType.toLowerCase().includes(search) ||
-      log.entityId.toLowerCase().includes(search) ||
-      log.path.toLowerCase().includes(search);
+    const matchesCategory = category ? log.category === category : true;
 
     const matchesAction =
       action === "CREATE" || action === "UPDATE" || action === "DELETE"
         ? log.action === action
         : true;
 
-    return matchesSearch && matchesAction;
+    const matchesUser = user ? log.actorUserId === user : true;
+
+    return matchesCategory && matchesAction && matchesUser;
   });
 
   const logs = sortLogs(filtered, sort);

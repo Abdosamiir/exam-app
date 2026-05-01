@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChevronsDownUp, Search, SlidersHorizontal } from "lucide-react";
+import { ChevronsDownUp, SlidersHorizontal } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,31 +10,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { useAuditLogs } from "../../hooks/use-audit-logs";
 
 const AuditLogsSearchFilter = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(true);
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [category, setCategory] = useState(
+    searchParams.get("category") ?? "all",
+  );
   const [action, setAction] = useState(searchParams.get("action") ?? "all");
+  const [user, setUser] = useState(searchParams.get("user") ?? "all");
+
+  const { data } = useAuditLogs(1, 100);
+  const logs = data && "payload" in data ? (data.payload?.data ?? []) : [];
+
+  const categories = useMemo(
+    () =>
+      Array.from(new Set(logs.map((log) => log.category).filter(Boolean))).sort(
+        (a, b) => a.localeCompare(b),
+      ),
+    [logs],
+  );
+
+  const users = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          logs
+            .filter((log) => log.actorUserId)
+            .map((log) => [
+              log.actorUserId,
+              {
+                id: log.actorUserId,
+                label: log.actorUsername || log.actorEmail || log.actorUserId,
+              },
+            ]),
+        ).values(),
+      ).sort((a, b) => a.label.localeCompare(b.label)),
+    [logs],
+  );
 
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", "1");
 
-    if (search.trim()) params.set("search", search.trim());
-    else params.delete("search");
+    params.delete("search");
+
+    if (category !== "all") params.set("category", category);
+    else params.delete("category");
 
     if (action !== "all") params.set("action", action);
     else params.delete("action");
+
+    if (user !== "all") params.set("user", user);
+    else params.delete("user");
 
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const clearFilters = () => {
-    setSearch("");
+    setCategory("all");
     setAction("all");
+    setUser("all");
     router.push(pathname);
   };
 
@@ -62,31 +101,47 @@ const AuditLogsSearchFilter = () => {
 
       {isOpen && (
         <div className="space-y-3 bg-white p-4">
-          <div className="relative">
-            <Search
-              size={15}
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by actor, entity, category, or path"
-              className="w-full border py-2 pl-4 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <div className="flex flex-wrap gap-3">
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-full sm:w-1/4">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All categories</SelectItem>
+                {categories.map((categoryItem) => (
+                  <SelectItem key={categoryItem} value={categoryItem}>
+                    {categoryItem}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={action} onValueChange={setAction}>
-            <SelectTrigger className="w-full sm:w-1/4">
-              <SelectValue placeholder="Action" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All actions</SelectItem>
-              <SelectItem value="CREATE">Create</SelectItem>
-              <SelectItem value="UPDATE">Update</SelectItem>
-              <SelectItem value="DELETE">Delete</SelectItem>
-            </SelectContent>
-          </Select>
+            <Select value={action} onValueChange={setAction}>
+              <SelectTrigger className="w-full sm:w-1/4">
+                <SelectValue placeholder="Action" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All actions</SelectItem>
+                <SelectItem value="CREATE">Create</SelectItem>
+                <SelectItem value="UPDATE">Update</SelectItem>
+                <SelectItem value="DELETE">Delete</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={user} onValueChange={setUser}>
+              <SelectTrigger className="w-full sm:w-1/4">
+                <SelectValue placeholder="User" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All users</SelectItem>
+                {users.map((userItem) => (
+                  <SelectItem key={userItem.id} value={userItem.id}>
+                    {userItem.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="flex justify-end gap-2">
             <button
