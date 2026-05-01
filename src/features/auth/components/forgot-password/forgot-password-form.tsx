@@ -42,12 +42,17 @@ const ForgotPasswordForm = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: ForgotPasswordSchema) => {
+      const redirectUrl = new URL(
+        "/reset-password",
+        window.location.origin,
+      ).toString();
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: data.email }),
+          body: JSON.stringify({ email: data.email, redirectUrl }),
         },
       );
 
