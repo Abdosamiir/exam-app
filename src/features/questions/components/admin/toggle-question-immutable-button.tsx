@@ -1,5 +1,6 @@
 "use client";
 
+import { Ban } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/shared/components/ui/button";
 import { USER_ROLES } from "@/features/auth/constants/user.constant";
@@ -19,13 +20,17 @@ const ToggleQuestionImmutableButton = ({ id, examId, immutable }: Props) => {
 
   return (
     <Button
-      size="sm"
       variant="outline"
       disabled={isPending}
       onClick={() => mutate(id)}
-      className={immutable ? "text-yellow-600 border-yellow-300" : "text-green-600 border-green-300"}
+      className={`rounded-none gap-1.5 ${
+        immutable
+          ? "border-yellow-300 text-yellow-600 hover:bg-yellow-50"
+          : "text-gray-700"
+      }`}
     >
-      {isPending ? "…" : immutable ? "Unlock" : "Lock"}
+      <Ban size={15} />
+      {isPending ? "…" : "Immutable"}
     </Button>
   );
 };

@@ -14,6 +14,9 @@ export interface IQuestion {
   createdAt: string;
   updatedAt: string;
   answers: IAnswer[];
+  question: {
+    id: string;
+  };
 }
 
 // payload for GET /api/questions/exam/{examId}

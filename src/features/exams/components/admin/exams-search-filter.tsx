@@ -17,6 +17,7 @@ const ExamsSearchFilter = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(true);
+  const [resetKey, setResetKey] = useState(0);
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [immutable, setImmutable] = useState(
     searchParams.get("immutable") ?? "all",
@@ -51,6 +52,7 @@ const ExamsSearchFilter = () => {
     setSearch("");
     setImmutable("all");
     setDiplomaId("all");
+    setResetKey((k) => k + 1);
     router.push(pathname);
   };
 
@@ -93,7 +95,7 @@ const ExamsSearchFilter = () => {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Select value={diplomaId} onValueChange={setDiplomaId}>
+            <Select key={`diploma-${resetKey}`} value={diplomaId} onValueChange={setDiplomaId}>
               <SelectTrigger className="w-full sm:w-1/4">
                 <SelectValue placeholder="Diploma" />
               </SelectTrigger>
@@ -107,7 +109,7 @@ const ExamsSearchFilter = () => {
               </SelectContent>
             </Select>
 
-            <Select value={immutable} onValueChange={setImmutable}>
+            <Select key={`immutable-${resetKey}`} value={immutable} onValueChange={setImmutable}>
               <SelectTrigger className="w-full sm:w-1/4">
                 <SelectValue placeholder="Immutability" />
               </SelectTrigger>

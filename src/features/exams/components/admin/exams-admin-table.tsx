@@ -53,14 +53,7 @@ const ExamRowMenu = ({ exam, role }: { exam: IExam; role?: TRole }) => {
             <Eye size={14} className="text-green-500" />
             View
           </Link>
-          <Link
-            href={`/admin/exams/${exam.id}/questions`}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            onClick={() => setOpen(false)}
-          >
-            <FileQuestion size={14} className="text-violet-500" />
-            Questions
-          </Link>
+     
           {canUpdate && (
             <Link
               href={`/admin/exams/${exam.id}/edit`}
