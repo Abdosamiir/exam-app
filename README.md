@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Exam App
+
+A Next.js exam platform with authentication, student dashboard flows, and admin tools for managing diplomas, exams, questions, users, submissions, and audit logs.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 with App Router
+- **Language:** TypeScript
+- **UI:** React 19
+- **Styling:** Tailwind CSS 4
+- **Components:** shadcn/ui, Radix UI
+- **Icons:** Lucide React
+- **Forms:** React Hook Form
+- **Validation:** Zod
+- **Data fetching/cache:** TanStack React Query
+- **Authentication:** NextAuth.js
+- **Charts:** Recharts
+- **Utilities:** clsx, tailwind-merge, class-variance-authority
+- **Linting:** ESLint with Next.js config
+
+## Main Features
+
+- Email/password authentication
+- Email verification, forgot password, and reset password flows
+- Student dashboard for diplomas, exams, answers, and submissions
+- Admin dashboard for diplomas, exams, questions, account management, and audit logs
+- Role/permission-aware UI behavior
+- API-backed forms and tables with pagination, filters, and mutations
+
+## Project Structure
+
+```txt
+src/
+  app/        Next.js routes, layouts, and route-level UI
+  features/   Feature modules such as auth, exams, diplomas, audit logs
+  shared/     Shared UI components, hooks, utilities, and app infrastructure
+```
+
+## Environment Variables
+
+Create a `.env` file and provide the required values:
+
+```env
+NEXT_PUBLIC_API_URL=your_backend_api_url
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_SESSION_COOKIE=your_session_cookie_name
+```
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build for production:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Start the production server:
 
-## Learn More
+```bash
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+Run linting:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` - start the Next.js development server
+- `npm run build` - create a production build
+- `npm run start` - run the production server
+- `npm run lint` - run ESLint
