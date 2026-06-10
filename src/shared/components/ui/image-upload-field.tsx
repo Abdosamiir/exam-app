@@ -121,7 +121,7 @@ const ImageUploadField = ({ value, onChange }: ImageUploadFieldProps) => {
             title="Change image"
             disabled={isPending}
             onClick={() => fileRef.current?.click()}
-            className="text-blue-500 transition-colors hover:text-blue-700 disabled:opacity-50"
+            className="text-primary transition-colors hover:text-primary disabled:opacity-50"
           >
             <Download className="size-4" />
           </button>

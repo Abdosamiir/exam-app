@@ -11,7 +11,11 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider
-      style={{ "--sidebar": "var(--color-blue-50)" } as React.CSSProperties}
+      style={
+        {
+          "--sidebar": "color-mix(in oklab, var(--primary) 5%, white)",
+        } as React.CSSProperties
+      }
     >
       {sidebar}
       <SidebarInset>

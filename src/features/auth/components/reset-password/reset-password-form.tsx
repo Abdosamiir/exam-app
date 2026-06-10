@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -30,20 +31,7 @@ const ResetPasswordForm = () => {
 
   const form = useForm<ResetPasswordSchema>({
     defaultValues: { newPassword: "", confirmPassword: "" },
-    resolver: async (values) => {
-      const result = resetPasswordSchema.safeParse(values);
-      if (result.success) return { values: result.data, errors: {} };
-      return {
-        values: {},
-        errors: result.error.issues.reduce<
-          Record<string, { message: string; type: string }>
-        >((acc, issue) => {
-          const key = String(issue.path[0]);
-          acc[key] = { message: issue.message, type: issue.code };
-          return acc;
-        }, {}),
-      };
-    },
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const { mutate, isPending } = useMutation({
@@ -94,7 +82,7 @@ const ResetPasswordForm = () => {
         </div>
         <Link
           href="/forgot-password"
-          className="text-sm text-blue-600 underline-offset-4 hover:underline"
+          className="text-sm text-primary underline-offset-4 hover:underline"
         >
           Request a new link
         </Link>
@@ -198,13 +186,13 @@ const ResetPasswordForm = () => {
       <div className="flex flex-col items-center justify-center gap-2">
         <Button
           disabled={isPending}
-          className="capitalize text-white bg-blue-600 w-full rounded-none p-4"
+          className="capitalize text-white bg-primary w-full rounded-none p-4"
         >
           {isPending ? "Resetting…" : "Reset password"}
         </Button>
         <p className="text-center text-muted-foreground text-sm  underline-offset-4 hover:underline">
           Don’t have an account?{" "}
-          <Link href="/register" className="text-blue-600">
+          <Link href="/register" className="text-primary">
             Create yours
           </Link>
         </p>

@@ -24,7 +24,10 @@ const AuditLogsSearchFilter = () => {
   const [user, setUser] = useState(searchParams.get("user") ?? "all");
 
   const { data } = useAuditLogs(1, 100);
-  const logs = data && "payload" in data ? (data.payload?.data ?? []) : [];
+  const logs = useMemo(
+    () => (data && "payload" in data ? (data.payload?.data ?? []) : []),
+    [data],
+  );
 
   const categories = useMemo(
     () =>
@@ -82,7 +85,7 @@ const AuditLogsSearchFilter = () => {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="flex w-full items-center justify-between bg-blue-500 px-4 py-3 font-semibold text-white"
+        className="flex w-full items-center justify-between bg-primary px-4 py-3 font-semibold text-white"
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={16} />

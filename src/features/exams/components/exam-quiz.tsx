@@ -125,16 +125,15 @@ const ExamQuiz = ({ exam, onProgress }: ExamQuizProps) => {
         </p>
 
         <fieldset className="flex flex-col gap-3">
-          {current.answers.map((answer, i) => {
-            const label = String.fromCharCode(65 + i);
+          {current.answers.map((answer) => {
             const isSelected = selectedAnswers[current.id] === answer.id;
             return (
               <label
                 key={answer.id}
                 className={`flex cursor-pointer items-center gap-3 bg-gray-100 px-4 py-3 text-sm transition-colors ${
                   isSelected
-                    ? "border-blue-500 bg-blue-50 text-blue-800 font-medium"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50/40"
+                    ? "border-primary bg-primary/5 text-primary font-medium"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
                 <input
@@ -148,7 +147,7 @@ const ExamQuiz = ({ exam, onProgress }: ExamQuizProps) => {
                       [current.id]: answer.id,
                     }))
                   }
-                  className="accent-blue-600"
+                  className="accent-primary"
                 />
 
                 {answer.text}
@@ -181,7 +180,7 @@ const ExamQuiz = ({ exam, onProgress }: ExamQuizProps) => {
         ) : (
           <Button
             onClick={() => setCurrentIndex((i) => Math.min(total - 1, i + 1))}
-            className="rounded-none w-1/2 bg-blue-600 px-5 py-5 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-none w-1/2 bg-primary px-5 py-5 text-sm font-medium text-white hover:bg-primary/90"
           >
             Next <ChevronRight />
           </Button>

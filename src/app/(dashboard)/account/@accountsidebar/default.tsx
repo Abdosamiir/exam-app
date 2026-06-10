@@ -49,9 +49,9 @@ const AccountSidebar = () => {
               <Link
                 href={href}
                 className={cn(
-                  "flex items-center gap-2 whitespace-nowrap rounded-none px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-blue-100! hover:text-blue-500! sm:gap-3",
+                  "flex items-center gap-2 whitespace-nowrap rounded-none px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-primary/10! hover:text-primary! sm:gap-3",
                   collapsed && "md:justify-center md:px-2",
-                  isActive && "text-blue-500 bg-blue-50",
+                  isActive && "text-primary bg-primary/5",
                 )}
               >
                 <Icon className="size-4 shrink-0" />

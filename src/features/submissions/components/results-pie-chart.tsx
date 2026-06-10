@@ -1,6 +1,6 @@
 "use client";
 
-import { PieChart, Pie, Cell, Label } from "recharts";
+import { PieChart, Pie } from "recharts";
 import {
   ChartContainer,
   type ChartConfig,
@@ -18,7 +18,6 @@ interface ResultsPieChartProps {
 
 const ResultsPieChart = ({ correct, total }: ResultsPieChartProps) => {
   const wrong = total - correct;
-  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   const chartData = [
     { name: "correct", value: correct, fill: "#22c55e" },

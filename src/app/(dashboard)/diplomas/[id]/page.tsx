@@ -1,10 +1,8 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { getDiplomaById } from "@/features/diplomas/api/api.diplomas";
 import { getExams } from "@/features/exams/api/api.exams";
 import ExamsList from "@/features/exams/components/exams-list";
-import Link from "next/link";
 
 export default async function DiplomaExamsPage({
   params,
@@ -12,17 +10,17 @@ export default async function DiplomaExamsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await getServerSession(authOptions);
+  const jwt = await getNextAuthToken();
   const queryClient = new QueryClient();
 
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: ["diplomas", id],
-      queryFn: () => getDiplomaById(id, session?.accessToken),
+      queryFn: () => getDiplomaById(id, jwt?.token),
     }),
     queryClient.prefetchQuery({
       queryKey: ["exams", id],
-      queryFn: () => getExams({ diplomaId: id }, session?.accessToken),
+      queryFn: () => getExams({ diplomaId: id }, jwt?.token),
     }),
   ]);
 

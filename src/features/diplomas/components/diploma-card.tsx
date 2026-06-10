@@ -26,9 +26,9 @@ const DiplomaCard = ({
         />
       )}
       {!diploma.image && (
-        <div className="h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-100" />
+        <div className="h-full w-full bg-gradient-to-br from-primary/5 via-white to-primary/10" />
       )}
-      <div className="flex flex-col gap-1 absolute bottom-0 left-0 right-0 px-5 pb-5 pt-4 bg-blue-600/75 text-white overflow-hidden max-h-25 group-hover:max-h-40 transition-all duration-300">
+      <div className="flex flex-col gap-1 absolute bottom-0 left-0 right-0 px-5 pb-5 pt-4 bg-primary/75 text-white overflow-hidden max-h-25 group-hover:max-h-40 transition-all duration-300">
         <h3 className="text-lg font-semibold ">
           {diploma.title}
         </h3>

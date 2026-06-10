@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { TRole } from "@/features/auth/types/user";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
+import { useClickOutside } from "@/shared/hooks/use-click-outside";
 import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,
@@ -37,7 +38,7 @@ const ACTION_STYLES: Record<IAuditLog["action"], string> = {
 
 const ROLE_STYLES: Record<string, string> = {
   ADMIN: " text-purple-700",
-  MANAGER: "text-blue-700",
+  MANAGER: "text-primary",
   USER: " text-gray-700",
 };
 
@@ -143,15 +144,7 @@ const SortDropdown = ({
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const close = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
+  useClickOutside(ref, () => setOpen(false));
 
   return (
     <div className="absolute   right-2" ref={ref}>
@@ -179,7 +172,7 @@ const SortDropdown = ({
               }}
               className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-50 ${
                 sort === option.value
-                  ? "font-semibold text-blue-600"
+                  ? "font-semibold text-primary"
                   : "text-gray-700"
               }`}
             >
@@ -202,15 +195,7 @@ const AuditLogRowMenu = ({ log, role }: { log: IAuditLog; role?: TRole }) => {
   const canDelete = hasPermission("delete:audit-logs", role);
   const ref = useRef<HTMLDivElement>(null);
   const { mutate, isPending } = useDeleteAuditLog();
-
-  useEffect(() => {
-    const close = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setMenuOpen(false);
-    };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
+  useClickOutside(ref, () => setMenuOpen(false));
 
   const handleDelete = () => {
     mutate(log.id, {
@@ -373,7 +358,7 @@ const AuditLogRow = ({ log, role }: { log: IAuditLog; role?: TRole }) => {
         {entityRoute ? (
           <Link
             href={`${entityRoute}/${log.entityId}`}
-            className="truncate text-xs text-blue-500 underline-offset-2 hover:underline"
+            className="truncate text-xs text-primary underline-offset-2 hover:underline"
           >
             {log.entityId}
           </Link>
@@ -452,7 +437,7 @@ const AuditLogsAdminTable = ({ role }: { role?: TRole }) => {
   return (
     <div className="overflow-hidden border bg-white">
       {/* Header */}
-      <div className="flex items-center gap-3 bg-blue-500 px-4 py-3 relative">
+      <div className="flex items-center gap-3 bg-primary px-4 py-3 relative">
         <div className="grid flex-1 grid-cols-[1fr_1.2fr_1fr_auto] gap-4 text-sm font-semibold text-white sm:grid-cols-[1fr_1.3fr_1fr_100px]">
           <div>Action</div>
           <div>User</div>

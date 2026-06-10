@@ -11,7 +11,8 @@ const ExamsPagination = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page") ?? "1");
-  const { data } = useExams(undefined, page, LIMIT);
+  const diplomaId = searchParams.get("diplomaId") ?? undefined;
+  const { data } = useExams(diplomaId, page, LIMIT);
   const metadata = data?.status ? data.payload?.metadata : undefined;
 
   if (!metadata || metadata.total === 0) return null;

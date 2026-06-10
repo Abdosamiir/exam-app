@@ -59,7 +59,7 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
         <p className="text-sm text-red-500">
           Failed to load results. Please try again.
         </p>
-        <Link href="/answers" className="text-sm text-blue-600 hover:underline">
+        <Link href="/answers" className="text-sm text-primary hover:underline">
           ← Back to my submissions
         </Link>
       </div>
@@ -78,21 +78,21 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
         </h1>
         <span className="text-sm text-gray-500">
           Question{" "}
-          <span className="font-bold text-blue-600">{totalQuestions}</span> of{" "}
+          <span className="font-bold text-primary">{totalQuestions}</span> of{" "}
           {totalQuestions}
         </span>
       </div>
 
       {/* Progress bar — full because exam is done */}
       <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-        <div className="h-full w-full rounded-full bg-blue-500" />
+        <div className="h-full w-full rounded-full bg-primary" />
       </div>
 
       {/* Main content */}
-      <p className="text-lg font-bold text-blue-700 self-start">Results:</p>
+      <p className="text-lg font-bold text-primary self-start">Results:</p>
       <div className="flex flex-col gap-4 md:min-h-0 md:flex-1 md:flex-row md:gap-6">
         {/* Left panel — stats */}
-        <div className="flex w-full shrink-0 flex-col items-center justify-center gap-5 rounded-none border border-blue-100 bg-blue-50 p-4 sm:flex-row sm:p-5 md:w-64 md:flex-col md:p-6">
+        <div className="flex w-full shrink-0 flex-col items-center justify-center gap-5 rounded-none border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:p-5 md:w-64 md:flex-col md:p-6">
           <ResultsPieChart correct={correctAnswers} total={totalQuestions} />
 
           <div className="flex w-full flex-col gap-2.5">
@@ -145,7 +145,7 @@ const SubmissionResults = ({ id }: SubmissionResultsProps) => {
         </Link>
         <Link
           href="/diplomas"
-          className="flex w-full flex-1 items-center justify-center gap-2 rounded-none bg-blue-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+          className="flex w-full flex-1 items-center justify-center gap-2 rounded-none bg-primary py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
         >
           <FolderSearch className="size-5" />
           Explore

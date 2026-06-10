@@ -5,11 +5,9 @@ import {
   IChangePasswordFields,
 } from "../types/user";
 
-export async function getProfile(
-  token: string
-): Promise<IApiResponse<IProfilePayload>> {
+export async function getProfile(): Promise<IApiResponse<IProfilePayload>> {
   const res = await fetch(`${API_BASE}/users/profile`, {
-    headers: authHeaders(token),
+    headers: authHeaders(),
     cache: "no-store",
   });
   return res.json();
@@ -17,11 +15,10 @@ export async function getProfile(
 
 export async function updateProfile(
   data: IUpdateProfileFields,
-  token: string
 ): Promise<IApiResponse<IProfilePayload>> {
   const res = await fetch(`${API_BASE}/users/profile`, {
     method: "PATCH",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
@@ -29,11 +26,10 @@ export async function updateProfile(
 
 export async function changePassword(
   data: IChangePasswordFields,
-  token: string
 ): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/users/change-password`, {
     method: "POST",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
@@ -41,11 +37,10 @@ export async function changePassword(
 
 export async function requestEmailChange(
   newEmail: string,
-  token: string
 ): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/users/email/request`, {
     method: "POST",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify({ newEmail }),
   });
   return res.json();
@@ -53,22 +48,19 @@ export async function requestEmailChange(
 
 export async function confirmEmailChange(
   code: string,
-  token: string
 ): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/users/email/confirm`, {
     method: "POST",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify({ code }),
   });
   return res.json();
 }
 
-export async function deleteAccount(
-  token: string
-): Promise<IApiResponse<null>> {
+export async function deleteAccount(): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/users/account`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: authHeaders(),
   });
   return res.json();
 }

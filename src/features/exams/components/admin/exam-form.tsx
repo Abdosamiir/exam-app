@@ -115,7 +115,7 @@ const ExamForm = ({ exam, mode }: ExamFormProps) => {
         </div>
       </h1>
       <div className="overflow-hidden border border-border shadow-sm">
-        <div className="bg-blue-600 px-6 py-3">
+        <div className="bg-primary px-6 py-3">
           <h2 className="text-sm font-semibold tracking-wide text-white uppercase">
             Exam Information
           </h2>

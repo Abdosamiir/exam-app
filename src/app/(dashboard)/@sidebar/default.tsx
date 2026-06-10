@@ -45,7 +45,7 @@ const DashboardSidebar = async () => {
                 alt={user.firstName}
                 width={48}
                 height={48}
-                className="rounded-none border border-blue-500 object-cover"
+                className="rounded-none border border-primary object-cover"
               />
             ) : (
               <div className="size-12 rounded-none bg-primary flex items-center justify-center text-white font-semibold text-sm shrink-0">
@@ -54,7 +54,7 @@ const DashboardSidebar = async () => {
               </div>
             )}
             <div className="flex min-w-0 flex-col items-start justify-start">
-              <span className="w-full truncate text-sm font-medium text-blue-600">
+              <span className="w-full truncate text-sm font-medium text-primary">
                 {user.firstName}
               </span>
               <span className="w-full truncate text-wrap text-xs text-muted-foreground">

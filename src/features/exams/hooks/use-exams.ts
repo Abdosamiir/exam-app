@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import {
   useInfiniteQuery,
   useMutation,
@@ -20,14 +19,10 @@ import { ICreateExamFields, IUpdateExamFields } from "../types/exam";
 const PAGE_SIZE = 6;
 
 export function useInfiniteExams(diplomaId?: string) {
-  const { data: session } = useSession();
   return useInfiniteQuery({
     queryKey: ["exams", "infinite", diplomaId ?? "all"],
     queryFn: ({ pageParam }) =>
-      getExams(
-        { diplomaId, page: pageParam as number, limit: PAGE_SIZE },
-        session?.accessToken,
-      ),
+      getExams({ diplomaId, page: pageParam as number, limit: PAGE_SIZE }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const meta = "payload" in lastPage ? lastPage.payload?.metadata : undefined;
@@ -38,28 +33,24 @@ export function useInfiniteExams(diplomaId?: string) {
 }
 
 export function useExams(diplomaId?: string, page?: number, limit?: number) {
-  const { data: session } = useSession();
   return useQuery({
     queryKey: ["exams", diplomaId ?? "all", page, limit],
-    queryFn: () => getExams({ diplomaId, page, limit }, session?.accessToken),
+    queryFn: () => getExams({ diplomaId, page, limit }),
   });
 }
 
 export function useExam(id: string) {
-  const { data: session } = useSession();
   return useQuery({
     queryKey: ["exams", "detail", id],
-    queryFn: () => getExamById(id, session?.accessToken),
+    queryFn: () => getExamById(id),
     enabled: !!id,
   });
 }
 
 export function useCreateExam() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: ICreateExamFields) =>
-      createExam(data, session!.accessToken),
+    mutationFn: (data: ICreateExamFields) => createExam(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
       queryClient.invalidateQueries({ queryKey: ["exams", variables.diplomaId] });
@@ -68,11 +59,9 @@ export function useCreateExam() {
 }
 
 export function useUpdateExam(id: string) {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: IUpdateExamFields) =>
-      updateExam(id, data, session!.accessToken),
+    mutationFn: (data: IUpdateExamFields) => updateExam(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
       queryClient.invalidateQueries({ queryKey: ["exams", "detail", id] });
@@ -81,10 +70,9 @@ export function useUpdateExam(id: string) {
 }
 
 export function useDeleteExam() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => deleteExam(id, session!.accessToken),
+    mutationFn: (id: string) => deleteExam(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
     },
@@ -92,10 +80,9 @@ export function useDeleteExam() {
 }
 
 export function useToggleExamImmutable() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => toggleExamImmutable(id, session!.accessToken),
+    mutationFn: (id: string) => toggleExamImmutable(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exams"] });
     },

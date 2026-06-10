@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   Eye,
-  FileQuestion,
   MoreHorizontal,
   Pencil,
   Trash2,
 } from "lucide-react";
 import { TRole } from "@/features/auth/types/user";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
+import { useClickOutside } from "@/shared/hooks/use-click-outside";
 import { useExams } from "../../hooks/use-exams";
 import { IExam } from "../../types/exam";
 
@@ -21,17 +21,7 @@ const ExamRowMenu = ({ exam, role }: { exam: IExam; role?: TRole }) => {
   const canUpdate = hasPermission("update:exams", role);
   const canDelete = hasPermission("delete:exams", role);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const close = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
+  useClickOutside(ref, () => setOpen(false));
 
   return (
     <div className="relative shrink-0" ref={ref}>
@@ -60,7 +50,7 @@ const ExamRowMenu = ({ exam, role }: { exam: IExam; role?: TRole }) => {
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => setOpen(false)}
             >
-              <Pencil size={14} className="text-blue-500" />
+              <Pencil size={14} className="text-primary" />
               Edit
             </Link>
           )}
@@ -93,7 +83,7 @@ const ExamRow = ({ exam, role }: { exam: IExam; role?: TRole }) => {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="h-full w-full bg-linear-to-br from-blue-50 via-white to-blue-100" />
+          <div className="h-full w-full bg-linear-to-br from-primary/5 via-white to-primary/10" />
         )}
       </div>
 
@@ -123,7 +113,10 @@ const ExamsAdminTable = ({ role }: { role?: TRole }) => {
   const page = Number(searchParams.get("page") ?? "1");
   const search = (searchParams.get("search") ?? "").toLowerCase().trim();
   const immutable = searchParams.get("immutable");
-  const { data, isLoading, isError } = useExams(undefined, page, 20);
+  // diplomaId is a supported API filter — push it to the query instead of
+  // filtering the current page client-side.
+  const diplomaId = searchParams.get("diplomaId") ?? undefined;
+  const { data, isLoading, isError } = useExams(diplomaId, page, 20);
 
   if (isLoading) {
     return (
@@ -162,7 +155,7 @@ const ExamsAdminTable = ({ role }: { role?: TRole }) => {
 
   return (
     <div className="overflow-hidden border bg-white">
-      <div className="flex items-center gap-4 bg-blue-500 px-4 py-3 text-sm font-semibold text-white">
+      <div className="flex items-center gap-4 bg-primary px-4 py-3 text-sm font-semibold text-white">
         <div className="w-14 shrink-0">Image</div>
         <div className="max-w-[180px] flex-[1_1_180px] sm:max-w-[320px] sm:flex-[1_1_320px] lg:max-w-[440px]">
           Title

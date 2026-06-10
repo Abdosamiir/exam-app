@@ -10,7 +10,7 @@ import {
 
 export async function getQuestionsByExam(
   examId: string,
-  token?: string
+  token?: string,
 ): Promise<IApiResponse<IQuestionsPayload>> {
   const res = await fetch(`${API_BASE}/questions/exam/${examId}`, {
     headers: authHeaders(token),
@@ -21,7 +21,7 @@ export async function getQuestionsByExam(
 
 export async function getQuestionById(
   id: string,
-  token?: string
+  token?: string,
 ): Promise<IApiResponse<IQuestionDetailPayload>> {
   const res = await fetch(`${API_BASE}/questions/${id}`, {
     headers: authHeaders(token),
@@ -32,11 +32,10 @@ export async function getQuestionById(
 
 export async function createQuestion(
   data: ICreateQuestionFields,
-  token: string
 ): Promise<IApiResponse<IQuestion>> {
   const res = await fetch(`${API_BASE}/questions`, {
     method: "POST",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
@@ -45,34 +44,29 @@ export async function createQuestion(
 export async function updateQuestion(
   id: string,
   data: IUpdateQuestionFields,
-  token: string
 ): Promise<IApiResponse<IQuestion>> {
   const res = await fetch(`${API_BASE}/questions/${id}`, {
     method: "PUT",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
 }
 
-export async function deleteQuestion(
-  id: string,
-  token: string
-): Promise<IApiResponse<null>> {
+export async function deleteQuestion(id: string): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/questions/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: authHeaders(),
   });
   return res.json();
 }
 
 export async function toggleQuestionImmutable(
   id: string,
-  token: string,
 ): Promise<IApiResponse<IQuestion>> {
   const res = await fetch(`${API_BASE}/admin/questions/${id}/immutable`, {
     method: "PATCH",
-    headers: authHeaders(token),
+    headers: authHeaders(),
   });
   return res.json();
 }
@@ -80,11 +74,10 @@ export async function toggleQuestionImmutable(
 export async function bulkCreateQuestions(
   examId: string,
   data: IBulkCreateQuestionsFields,
-  token: string
 ): Promise<IApiResponse<IQuestionsPayload>> {
   const res = await fetch(`${API_BASE}/questions/exam/${examId}/bulk`, {
     method: "POST",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();

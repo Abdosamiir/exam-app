@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, X, LayoutGrid, Trash2, Check, Plus } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
@@ -22,13 +23,12 @@ import {
   useBulkCreateQuestions,
 } from "../../hooks/use-questions";
 import {
-  IQuestion,
-  ICreateQuestionFields,
-  IUpdateQuestionFields,
-} from "../../types/question";
-
-type BulkAnswer = { text: string; isCorrect: boolean };
-type BulkQuestion = { text: string; answers: BulkAnswer[] };
+  questionSchema,
+  bulkQuestionsSchema,
+  QuestionSchema,
+  BulkQuestionsSchema,
+} from "../../schemas/question.schema";
+import { IQuestion, IUpdateQuestionFields } from "../../types/question";
 
 interface QuestionFormProps {
   examId: string;
@@ -56,7 +56,8 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
   const updateQuestion = useUpdateQuestion(question?.id ?? "", examId);
   const singlePending = createQuestion.isPending || updateQuestion.isPending;
 
-  const form = useForm<ICreateQuestionFields>({
+  const form = useForm<QuestionSchema>({
+    resolver: zodResolver(questionSchema),
     defaultValues: {
       text: question?.text ?? "",
       examId,
@@ -69,6 +70,9 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
     name: "answers",
   });
   const watchedAnswers = useWatch({ control: form.control, name: "answers" });
+  const answersError =
+    form.formState.errors.answers?.message ??
+    form.formState.errors.answers?.root?.message;
 
   const handleMarkCorrect = (index: number) => {
     fields.forEach((_, i) =>
@@ -83,7 +87,7 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
     setShowPending(false);
   };
 
-  const onSingleSubmit = (data: ICreateQuestionFields) => {
+  const onSingleSubmit = (data: QuestionSchema) => {
     setFormError(null);
     if (mode === "create") {
       createQuestion.mutate(data, {
@@ -112,16 +116,34 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
   };
 
   // ── bulk-mode ──────────────────────────────────────────────────────────────
-  const [bulkQuestions, setBulkQuestions] = useState<BulkQuestion[]>([
-    { text: "", answers: [] },
-  ]);
   const [activeQIdx, setActiveQIdx] = useState(0);
   const [bulkPendingAnswer, setBulkPendingAnswer] = useState("");
   const [bulkShowPending, setBulkShowPending] = useState(false);
   const [bulkError, setBulkError] = useState<string | null>(null);
 
+  const bulkForm = useForm<BulkQuestionsSchema>({
+    resolver: zodResolver(bulkQuestionsSchema),
+    defaultValues: { questions: [{ text: "", answers: [] }] },
+  });
+  const questionsArray = useFieldArray({
+    control: bulkForm.control,
+    name: "questions",
+  });
+  // Nested field array scoped to the question on the active tab.
+  const answersArray = useFieldArray({
+    control: bulkForm.control,
+    name: `questions.${activeQIdx}.answers`,
+  });
+  const watchedBulkAnswers = useWatch({
+    control: bulkForm.control,
+    name: `questions.${activeQIdx}.answers`,
+  });
+  const activeQuestionErrors = bulkForm.formState.errors.questions?.[activeQIdx];
+  const activeAnswersError =
+    activeQuestionErrors?.answers?.message ??
+    activeQuestionErrors?.answers?.root?.message;
+
   const bulkCreate = useBulkCreateQuestions(selectedExamId);
-  const activeQ = bulkQuestions[activeQIdx];
 
   const switchTab = (i: number) => {
     setActiveQIdx(i);
@@ -130,56 +152,38 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
   };
 
   const addBulkQuestion = () => {
-    const next = bulkQuestions.length;
-    setBulkQuestions((prev) => [...prev, { text: "", answers: [] }]);
+    const next = questionsArray.fields.length;
+    questionsArray.append({ text: "", answers: [] });
     switchTab(next);
   };
 
   const removeBulkQuestion = (i: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (bulkQuestions.length === 1) return;
-    setBulkQuestions((prev) => prev.filter((_, j) => j !== i));
-    setActiveQIdx((prev) => Math.min(prev, bulkQuestions.length - 2));
+    if (questionsArray.fields.length === 1) return;
+    questionsArray.remove(i);
+    setActiveQIdx((prev) => Math.min(prev, questionsArray.fields.length - 2));
   };
-
-  const updateBulkText = (text: string) =>
-    setBulkQuestions((prev) =>
-      prev.map((q, i) => (i === activeQIdx ? { ...q, text } : q)),
-    );
 
   const addBulkAnswer = () => {
     if (!bulkPendingAnswer.trim()) return;
-    setBulkQuestions((prev) =>
-      prev.map((q, i) =>
-        i === activeQIdx
-          ? { ...q, answers: [...q.answers, { text: bulkPendingAnswer.trim(), isCorrect: false }] }
-          : q,
-      ),
-    );
+    answersArray.append({ text: bulkPendingAnswer.trim(), isCorrect: false });
     setBulkPendingAnswer("");
     setBulkShowPending(false);
   };
 
-  const removeBulkAnswer = (aIdx: number) =>
-    setBulkQuestions((prev) =>
-      prev.map((q, i) =>
-        i === activeQIdx ? { ...q, answers: q.answers.filter((_, j) => j !== aIdx) } : q,
-      ),
+  const markBulkCorrect = (aIdx: number) => {
+    answersArray.fields.forEach((_, i) =>
+      answersArray.update(i, {
+        ...bulkForm.getValues(`questions.${activeQIdx}.answers.${i}`),
+        isCorrect: i === aIdx,
+      }),
     );
+  };
 
-  const markBulkCorrect = (aIdx: number) =>
-    setBulkQuestions((prev) =>
-      prev.map((q, i) =>
-        i === activeQIdx
-          ? { ...q, answers: q.answers.map((a, j) => ({ ...a, isCorrect: j === aIdx })) }
-          : q,
-      ),
-    );
-
-  const onBulkSubmit = () => {
+  const onBulkSubmit = (data: BulkQuestionsSchema) => {
     setBulkError(null);
     bulkCreate.mutate(
-      { questions: bulkQuestions },
+      { questions: data.questions },
       {
         onSuccess: (res) => {
           if (!res.status) {
@@ -197,7 +201,7 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (bulkMode) {
-      onBulkSubmit();
+      bulkForm.handleSubmit(onBulkSubmit)(e);
     } else {
       form.handleSubmit(onSingleSubmit)(e);
     }
@@ -213,7 +217,9 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
           variant={bulkMode ? "default" : "outline"}
           className={cn(
             "rounded-none gap-2",
-            bulkMode ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-200",
+            bulkMode
+              ? "bg-primary text-primary-foreground hover:bg-primary/90"
+              : "bg-gray-200",
           )}
           onClick={() => setBulkMode((v) => !v)}
         >
@@ -246,8 +252,8 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
         <>
           {/* Exam Info */}
           <div className="overflow-hidden border border-border shadow-sm">
-            <div className="bg-blue-600 px-6 py-3">
-              <h2 className="text-sm font-semibold tracking-wide text-white capitalize">
+            <div className="bg-primary px-6 py-3">
+              <h2 className="text-sm font-semibold tracking-wide text-primary-foreground capitalize">
                 Exam Info
               </h2>
             </div>
@@ -275,28 +281,29 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
 
           {/* Questions tabs */}
           <div className="overflow-hidden border border-border shadow-sm">
-            <div className="bg-blue-600 px-6 py-3">
-              <h2 className="text-sm font-semibold tracking-wide text-white capitalize">
+            <div className="bg-primary px-6 py-3">
+              <h2 className="text-sm font-semibold tracking-wide text-primary-foreground capitalize">
                 Questions
               </h2>
             </div>
 
             {/* Tab row */}
             <div className="flex items-center overflow-x-auto border-b border-border bg-white">
-              {bulkQuestions.map((_, i) => (
+              {questionsArray.fields.map((field, i) => (
                 <button
-                  key={i}
+                  key={field.id}
                   type="button"
                   onClick={() => switchTab(i)}
                   className={cn(
                     "group flex items-center gap-1 px-4 py-2.5 border-r border-border text-sm whitespace-nowrap shrink-0 transition-colors",
                     activeQIdx === i
-                      ? "text-blue-600 font-semibold"
+                      ? "text-primary font-semibold"
                       : "text-gray-600 hover:bg-gray-50",
+                    bulkForm.formState.errors.questions?.[i] && "text-destructive",
                   )}
                 >
                   Q{i + 1}
-                  {bulkQuestions.length > 1 && (
+                  {questionsArray.fields.length > 1 && (
                     <span
                       role="button"
                       onClick={(e) => removeBulkQuestion(i, e)}
@@ -318,7 +325,7 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
 
             {/* Active question editor */}
             <div className="p-4">
-              <div className="border-2 border-blue-400 p-4 flex flex-col gap-3">
+              <div className="border-2 border-primary/60 p-4 flex flex-col gap-3">
                 {/* Headline */}
                 <div className="flex flex-col gap-1">
                   <FieldLabel htmlFor={`bulk-q-${activeQIdx}`}>
@@ -327,10 +334,17 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
                   <textarea
                     id={`bulk-q-${activeQIdx}`}
                     rows={2}
-                    value={activeQ.text}
-                    onChange={(e) => updateBulkText(e.target.value)}
-                    className="border-input w-full border bg-transparent px-3 py-2 text-sm outline-none resize-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition-[color,box-shadow]"
+                    {...bulkForm.register(`questions.${activeQIdx}.text`)}
+                    aria-invalid={!!activeQuestionErrors?.text}
+                    className={cn(
+                      "border-input w-full border bg-transparent px-3 py-2 text-sm outline-none resize-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition-[color,box-shadow]",
+                      activeQuestionErrors?.text &&
+                        "border-destructive ring-destructive/20",
+                    )}
                   />
+                  {activeQuestionErrors?.text && (
+                    <FieldError errors={[activeQuestionErrors.text]} />
+                  )}
                 </div>
 
                 {/* Answers table */}
@@ -351,34 +365,40 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
                   </div>
 
                   {/* Answer rows */}
-                  {activeQ.answers.map((answer, aIdx) => (
-                    <div
-                      key={aIdx}
-                      className="flex items-center px-4 py-3 border-b border-border gap-3"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => removeBulkAnswer(aIdx)}
-                        className="text-red-500 hover:text-red-600 shrink-0"
+                  {answersArray.fields.map((answer, aIdx) => {
+                    const isCorrect =
+                      watchedBulkAnswers?.[aIdx]?.isCorrect ?? false;
+                    return (
+                      <div
+                        key={answer.id}
+                        className="flex items-center px-4 py-3 border-b border-border gap-3"
                       >
-                        <Trash2 size={16} />
-                      </button>
-                      <span className="flex-1 text-sm text-gray-800">{answer.text}</span>
-                      <button
-                        type="button"
-                        onClick={() => markBulkCorrect(aIdx)}
-                        className={cn(
-                          "flex items-center gap-1 text-sm shrink-0 transition-colors",
-                          answer.isCorrect
-                            ? "text-green-500 font-medium"
-                            : "border border-gray-300 px-3 py-1 text-gray-600 hover:bg-gray-50",
-                        )}
-                      >
-                        <Check size={14} />
-                        {answer.isCorrect ? "Correct Answer" : "Mark Correct"}
-                      </button>
-                    </div>
-                  ))}
+                        <button
+                          type="button"
+                          onClick={() => answersArray.remove(aIdx)}
+                          className="text-red-500 hover:text-red-600 shrink-0"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                        <span className="flex-1 text-sm text-gray-800">
+                          {answer.text}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => markBulkCorrect(aIdx)}
+                          className={cn(
+                            "flex items-center gap-1 text-sm shrink-0 transition-colors",
+                            isCorrect
+                              ? "text-green-500 font-medium"
+                              : "border border-gray-300 px-3 py-1 text-gray-600 hover:bg-gray-50",
+                          )}
+                        >
+                          <Check size={14} />
+                          {isCorrect ? "Correct Answer" : "Mark Correct"}
+                        </button>
+                      </div>
+                    );
+                  })}
 
                   {/* Pending answer input */}
                   {bulkShowPending && (
@@ -417,6 +437,11 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
                     </div>
                   )}
                 </div>
+                {activeAnswersError && (
+                  <p role="alert" className="text-sm text-destructive">
+                    {activeAnswersError}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -432,8 +457,8 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
         <>
           {/* Question Information */}
           <div className="overflow-hidden border border-border shadow-sm">
-            <div className="bg-blue-600 px-6 py-3">
-              <h2 className="text-sm font-semibold tracking-wide text-white uppercase">
+            <div className="bg-primary px-6 py-3">
+              <h2 className="text-sm font-semibold tracking-wide text-primary-foreground uppercase">
                 Question Information
               </h2>
             </div>
@@ -467,7 +492,7 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
                     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
                     form.formState.errors.text && "border-destructive ring-destructive/20",
                   )}
-                  {...form.register("text", { required: "Question headline is required" })}
+                  {...form.register("text")}
                   aria-invalid={!!form.formState.errors.text}
                 />
                 {form.formState.errors.text && (
@@ -479,8 +504,8 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
 
           {/* Question Answers */}
           <div className="overflow-hidden border border-border shadow-sm">
-            <div className="bg-blue-600 px-6 py-3">
-              <h2 className="text-sm font-semibold tracking-wide text-white uppercase">
+            <div className="bg-primary px-6 py-3">
+              <h2 className="text-sm font-semibold tracking-wide text-primary-foreground uppercase">
                 Question Answers
               </h2>
             </div>
@@ -570,6 +595,12 @@ const QuestionForm = ({ examId, question, mode }: QuestionFormProps) => {
               </div>
             )}
           </div>
+
+          {answersError && (
+            <p role="alert" className="text-sm text-destructive">
+              {answersError}
+            </p>
+          )}
 
           {formError && (
             <p role="alert" className="text-sm text-destructive">

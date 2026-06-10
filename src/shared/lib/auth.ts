@@ -43,14 +43,15 @@ export const authOptions: NextAuthOptions = {
 
       if (trigger === "update" && session) {
         token.user = session.user;
-        token.token = session.accessToken;
       }
 
       return token;
     },
+    // The backend access token stays in the (httpOnly) JWT cookie only.
+    // It is read server-side by the /api/proxy route handler and never
+    // exposed to the browser through the session.
     session: ({ session, token }) => {
       session.user = token.user;
-      session.accessToken = token.token;
 
       return session;
     },

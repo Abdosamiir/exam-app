@@ -11,8 +11,9 @@ const DiplomasPagination = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page") ?? "1");
+  const search = (searchParams.get("search") ?? "").trim();
 
-  const { data } = useDiplomas(page, LIMIT);
+  const { data } = useDiplomas(page, LIMIT, search);
   const metadata = data?.status ? data.payload?.metadata : undefined;
 
   if (!metadata || metadata.total === 0) return null;

@@ -15,10 +15,10 @@ export const FullQuestionReview = ({
   analytics,
 }: FullQuestionReviewProps) => {
   const correctMap = Object.fromEntries(
-    analytics.map((a) => [a.questionId, a.correctAnswer.id]),
+    analytics.map((a) => [a.questionId, a.correctAnswer?.id]),
   );
   const selectedMap = Object.fromEntries(
-    analytics.map((a) => [a.questionId, a.selectedAnswer.id]),
+    analytics.map((a) => [a.questionId, a.selectedAnswer?.id]),
   );
 
   return (
@@ -28,7 +28,7 @@ export const FullQuestionReview = ({
         const correctId = correctMap[q.id];
         return (
           <div key={q.id} className="flex flex-col gap-2">
-            <p className="text-sm font-semibold text-blue-600">
+            <p className="text-sm font-semibold text-primary">
               {i + 1}. {q.text}
             </p>
             <div className="flex flex-col gap-1.5">
@@ -93,43 +93,57 @@ export const SimpleQuestionReview = ({
   <div className="flex flex-col gap-5">
     {analytics.map((item, i) => (
       <div key={item.questionId} className="flex flex-col gap-2">
-        <p className="text-sm font-semibold text-blue-600">
+        <p className="text-sm font-semibold text-primary">
           {i + 1}. {item.questionText}
         </p>
         <div className="flex flex-col gap-1.5">
-          <div
-            className={`flex flex-col items-start gap-2 rounded-none border px-3 py-2.5 text-sm sm:flex-row sm:items-center sm:gap-3 sm:px-4 ${
-              item.isCorrect
-                ? "bg-green-50 border-green-300"
-                : "bg-red-50 border-red-300"
-            }`}
-          >
-            <div className="flex min-w-0 items-start gap-3 sm:items-center">
-              <span
-                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 sm:mt-0 ${
-                  item.isCorrect
-                    ? "border-green-500 bg-green-500"
-                    : "border-red-500 bg-red-500"
-                }`}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              </span>
-              <span
-                className={`min-w-0 break-words ${
-                  item.isCorrect
-                    ? "text-green-700 font-medium"
-                    : "text-red-700"
-                }`}
-              >
-                {item.selectedAnswer.text}
+          {item.selectedAnswer ? (
+            <div
+              className={`flex flex-col items-start gap-2 rounded-none border px-3 py-2.5 text-sm sm:flex-row sm:items-center sm:gap-3 sm:px-4 ${
+                item.isCorrect
+                  ? "bg-green-50 border-green-300"
+                  : "bg-red-50 border-red-300"
+              }`}
+            >
+              <div className="flex min-w-0 items-start gap-3 sm:items-center">
+                <span
+                  className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 sm:mt-0 ${
+                    item.isCorrect
+                      ? "border-green-500 bg-green-500"
+                      : "border-red-500 bg-red-500"
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                </span>
+                <span
+                  className={`min-w-0 break-words ${
+                    item.isCorrect
+                      ? "text-green-700 font-medium"
+                      : "text-red-700"
+                  }`}
+                >
+                  {item.selectedAnswer.text}
+                </span>
+              </div>
+              <span className="text-xs text-gray-400 sm:ml-auto">
+                Your answer
               </span>
             </div>
-            <span className="text-xs text-gray-400 sm:ml-auto">
-              Your answer
-            </span>
-          </div>
+          ) : (
+            <div className="flex flex-col items-start gap-2 rounded-none border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm sm:flex-row sm:items-center sm:gap-3 sm:px-4">
+              <div className="flex min-w-0 items-start gap-3 sm:items-center">
+                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 sm:mt-0" />
+                <span className="min-w-0 break-words text-gray-500 italic">
+                  Not answered
+                </span>
+              </div>
+              <span className="text-xs text-gray-400 sm:ml-auto">
+                Your answer
+              </span>
+            </div>
+          )}
 
-          {!item.isCorrect && (
+          {!item.isCorrect && item.correctAnswer && (
             <div className="flex flex-col items-start gap-2 rounded-none border bg-green-50 border-green-300 px-3 py-2.5 text-sm sm:flex-row sm:items-center sm:gap-3 sm:px-4">
               <div className="flex min-w-0 items-start gap-3 sm:items-center">
                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-green-500 bg-green-500 sm:mt-0">

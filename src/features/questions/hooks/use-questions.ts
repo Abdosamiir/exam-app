@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getQuestionsByExam,
@@ -18,29 +17,25 @@ import {
 } from "../types/question";
 
 export function useQuestions(examId: string) {
-  const { data: session } = useSession();
   return useQuery({
     queryKey: ["questions", "exam", examId],
-    queryFn: () => getQuestionsByExam(examId, session?.accessToken),
+    queryFn: () => getQuestionsByExam(examId),
     enabled: !!examId,
   });
 }
 
 export function useQuestion(id: string) {
-  const { data: session } = useSession();
   return useQuery({
     queryKey: ["questions", "detail", id],
-    queryFn: () => getQuestionById(id, session?.accessToken),
+    queryFn: () => getQuestionById(id),
     enabled: !!id,
   });
 }
 
 export function useCreateQuestion() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: ICreateQuestionFields) =>
-      createQuestion(data, session!.accessToken),
+    mutationFn: (data: ICreateQuestionFields) => createQuestion(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["questions", "exam", variables.examId],
@@ -50,11 +45,9 @@ export function useCreateQuestion() {
 }
 
 export function useUpdateQuestion(id: string, examId: string) {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: IUpdateQuestionFields) =>
-      updateQuestion(id, data, session!.accessToken),
+    mutationFn: (data: IUpdateQuestionFields) => updateQuestion(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questions", "exam", examId] });
       queryClient.invalidateQueries({ queryKey: ["questions", "detail", id] });
@@ -63,10 +56,9 @@ export function useUpdateQuestion(id: string, examId: string) {
 }
 
 export function useDeleteQuestion(examId: string) {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => deleteQuestion(id, session!.accessToken),
+    mutationFn: (id: string) => deleteQuestion(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questions", "exam", examId] });
     },
@@ -74,10 +66,9 @@ export function useDeleteQuestion(examId: string) {
 }
 
 export function useToggleQuestionImmutable(examId: string) {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => toggleQuestionImmutable(id, session!.accessToken),
+    mutationFn: (id: string) => toggleQuestionImmutable(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questions", "exam", examId] });
     },
@@ -85,11 +76,10 @@ export function useToggleQuestionImmutable(examId: string) {
 }
 
 export function useBulkCreateQuestions(examId: string) {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: IBulkCreateQuestionsFields) =>
-      bulkCreateQuestions(examId, data, session!.accessToken),
+      bulkCreateQuestions(examId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questions", "exam", examId] });
     },

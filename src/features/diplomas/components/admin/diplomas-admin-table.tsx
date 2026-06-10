@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
   ArrowDownAZ,
@@ -16,6 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
+import { useClickOutside } from "@/shared/hooks/use-click-outside";
 import { useDiplomas } from "../../hooks/use-diplomas";
 import { IDiploma } from "../../types/diploma";
 
@@ -52,24 +54,14 @@ const SortDropdown = ({
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const close = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
+  useClickOutside(ref, () => setOpen(false));
 
   return (
     <div className="relative shrink-0" ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="flex items-center gap-1.5 text-sm font-semibold text-white hover:opacity-80"
+        className="flex items-center gap-1.5 text-sm font-semibold text-primary-foreground hover:opacity-80"
       >
         Sort
         <ArrowDownWideNarrow size={14} />
@@ -87,7 +79,7 @@ const SortDropdown = ({
               }}
               className={`flex w-full items-center gap-2.5 px-3 py-2 text-xs hover:bg-gray-50 ${
                 value === key
-                  ? "bg-blue-50 font-medium text-blue-600"
+                  ? "bg-primary/10 font-medium text-primary"
                   : "text-gray-700"
               }`}
             >
@@ -107,17 +99,7 @@ const DiplomaRowMenu = ({ diploma }: { diploma: IDiploma }) => {
   const canUpdate = hasPermission("update:diplomas", session?.user.role);
   const canDelete = hasPermission("delete:diplomas", session?.user.role);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const close = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
+  useClickOutside(ref, () => setOpen(false));
 
   return (
     <div className="relative shrink-0" ref={ref}>
@@ -145,7 +127,7 @@ const DiplomaRowMenu = ({ diploma }: { diploma: IDiploma }) => {
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => setOpen(false)}
             >
-              <Pencil size={14} className="text-blue-500" />
+              <Pencil size={14} className="text-primary" />
               Edit
             </Link>
           )}
@@ -178,7 +160,7 @@ const DiplomaRow = ({ diploma }: { diploma: IDiploma }) => {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="h-full w-full bg-linear-to-br from-blue-50 via-white to-blue-100" />
+          <div className="h-full w-full bg-linear-to-br from-primary/5 via-white to-primary/10" />
         )}
       </div>
 
@@ -198,9 +180,12 @@ const DiplomaRow = ({ diploma }: { diploma: IDiploma }) => {
 };
 
 const DiplomasAdminTable = () => {
-  const [page] = useState(1);
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page") ?? "1");
+  const search = (searchParams.get("search") ?? "").trim();
+  const immutable = searchParams.get("immutable");
   const [sort, setSort] = useState<SortKey>("newest-desc");
-  const { data, isLoading, isError } = useDiplomas(page, LIMIT);
+  const { data, isLoading, isError } = useDiplomas(page, LIMIT, search);
 
   if (isLoading) {
     return (
@@ -220,15 +205,26 @@ const DiplomasAdminTable = () => {
     );
   }
 
-  const diplomas = sortDiplomas(data.payload?.data ?? [], sort);
+  const filtered = (data.payload?.data ?? []).filter((diploma) => {
+    const matchesSearch =
+      !search || diploma.title.toLowerCase().includes(search.toLowerCase());
+    const matchesImmutable =
+      immutable !== "true" && immutable !== "false"
+        ? true
+        : String(diploma.immutable) === immutable;
 
-  if (diplomas.length === 0 && page === 1) {
-    return <p className="text-sm text-gray-500">No diplomas yet.</p>;
+    return matchesSearch && matchesImmutable;
+  });
+
+  const diplomas = sortDiplomas(filtered, sort);
+
+  if (diplomas.length === 0) {
+    return <p className="text-sm text-gray-500">No diplomas found.</p>;
   }
 
   return (
     <div className="overflow-hidden border bg-white">
-      <div className="flex items-center gap-4 bg-blue-500 px-4 py-3 text-sm font-semibold text-white">
+      <div className="flex items-center gap-4 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground">
         <div className="w-14 shrink-0">Image</div>
         <div className="w-1/4">Title</div>
         <div className="flex-1">Description</div>

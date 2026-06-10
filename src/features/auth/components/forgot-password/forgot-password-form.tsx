@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 
@@ -24,20 +25,7 @@ const ForgotPasswordForm = () => {
 
   const form = useForm<ForgotPasswordSchema>({
     defaultValues: { email: "" },
-    resolver: async (values) => {
-      const result = forgotPasswordSchema.safeParse(values);
-      if (result.success) return { values: result.data, errors: {} };
-      return {
-        values: {},
-        errors: result.error.issues.reduce<
-          Record<string, { message: string; type: string }>
-        >((acc, issue) => {
-          const key = String(issue.path[0]);
-          acc[key] = { message: issue.message, type: issue.code };
-          return acc;
-        }, {}),
-      };
-    },
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
   const { mutate, isPending } = useMutation({
@@ -89,7 +77,7 @@ const ForgotPasswordForm = () => {
         </div>
         <Link
           href="/login"
-          className="text-sm text-blue-600 underline-offset-4 hover:underline"
+          className="text-sm text-primary underline-offset-4 hover:underline"
         >
           Back to login
         </Link>
@@ -142,14 +130,14 @@ const ForgotPasswordForm = () => {
 
       <Button
         disabled={isPending}
-        className="capitalize text-white bg-blue-600 rounded-none p-4"
+        className="capitalize text-white bg-primary rounded-none p-4"
       >
         {isPending ? "Sending…" : "Next"}
       </Button>
 
       <p className="text-center text-sm  underline-offset-4 hover:underline">
         Don’t have an account?{" "}
-        <Link href="/register" className="text-blue-600">
+        <Link href="/register" className="text-primary">
           Create yours
         </Link>
       </p>

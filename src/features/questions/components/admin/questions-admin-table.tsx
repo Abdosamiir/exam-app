@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
+import { useClickOutside } from "@/shared/hooks/use-click-outside";
 import { useQuestions } from "../../hooks/use-questions";
 import { IQuestion } from "../../types/question";
 
@@ -15,16 +16,7 @@ const QuestionRowMenu = ({ question }: { question: IQuestion }) => {
   const canUpdate = hasPermission("update:exams", role);
   const canDelete = hasPermission("delete:exams", role);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const close = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
+  useClickOutside(ref, () => setOpen(false));
 
   return (
     <div className="relative shrink-0" ref={ref}>
@@ -52,7 +44,7 @@ const QuestionRowMenu = ({ question }: { question: IQuestion }) => {
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => setOpen(false)}
             >
-              <Pencil size={14} className="text-blue-500" />
+              <Pencil size={14} className="text-primary" />
               Edit
             </Link>
           )}

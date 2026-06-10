@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronRight, MoreHorizontal, Slash } from "lucide-react"
+import { MoreHorizontal, Slash } from "lucide-react"
 import { Slot } from "radix-ui"
 
 import { cn } from "@/shared/lib/utils/utils"

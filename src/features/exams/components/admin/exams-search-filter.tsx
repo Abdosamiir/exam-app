@@ -61,7 +61,7 @@ const ExamsSearchFilter = () => {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="flex w-full items-center justify-between bg-blue-500 px-4 py-3 font-semibold text-white"
+        className="flex w-full items-center justify-between bg-primary px-4 py-3 font-semibold text-white"
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={16} />
@@ -90,7 +90,7 @@ const ExamsSearchFilter = () => {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search by title"
-              className="w-full border py-2 pl-4 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border py-2 pl-4 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 

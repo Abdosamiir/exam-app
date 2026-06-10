@@ -13,20 +13,18 @@ import {
 import { IUpdateProfileFields, IChangePasswordFields } from "../types/user";
 
 export function useProfile() {
-  const { data: session } = useSession();
+  const { status } = useSession();
   return useQuery({
     queryKey: ["profile"],
-    queryFn: () => getProfile(session!.accessToken),
-    enabled: !!session?.accessToken,
+    queryFn: () => getProfile(),
+    enabled: status === "authenticated",
   });
 }
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
   return useMutation({
-    mutationFn: (data: IUpdateProfileFields) =>
-      updateProfile(data, session!.accessToken),
+    mutationFn: (data: IUpdateProfileFields) => updateProfile(data),
     onSuccess: (res) => {
       if (res.status) {
         queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -36,27 +34,21 @@ export function useUpdateProfile() {
 }
 
 export function useChangePassword() {
-  const { data: session } = useSession();
   return useMutation({
-    mutationFn: (data: IChangePasswordFields) =>
-      changePassword(data, session!.accessToken),
+    mutationFn: (data: IChangePasswordFields) => changePassword(data),
   });
 }
 
 export function useRequestEmailChange() {
-  const { data: session } = useSession();
   return useMutation({
-    mutationFn: (newEmail: string) =>
-      requestEmailChange(newEmail, session!.accessToken),
+    mutationFn: (newEmail: string) => requestEmailChange(newEmail),
   });
 }
 
 export function useConfirmEmailChange() {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
   return useMutation({
-    mutationFn: (code: string) =>
-      confirmEmailChange(code, session!.accessToken),
+    mutationFn: (code: string) => confirmEmailChange(code),
     onSuccess: (res) => {
       if (res.status) {
         queryClient.invalidateQueries({ queryKey: ["profile"] });
@@ -66,8 +58,7 @@ export function useConfirmEmailChange() {
 }
 
 export function useDeleteAccount() {
-  const { data: session } = useSession();
   return useMutation({
-    mutationFn: () => deleteAccount(session!.accessToken),
+    mutationFn: () => deleteAccount(),
   });
 }

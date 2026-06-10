@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signOut } from "next-auth/react";
 
 import { Field, FieldLabel, FieldError } from "@/shared/components/ui/field";
@@ -33,20 +34,7 @@ const ProfileForm = () => {
 
   const form = useForm<UpdateProfileSchema>({
     defaultValues: { firstName: "", lastName: "", phone: "" },
-    resolver: async (values) => {
-      const result = updateProfileSchema.safeParse(values);
-      if (result.success) return { values: result.data, errors: {} };
-      return {
-        values: {},
-        errors: result.error.issues.reduce<
-          Record<string, { message: string; type: string }>
-        >((acc, issue) => {
-          const key = String(issue.path[0]);
-          acc[key] = { message: issue.message, type: issue.code };
-          return acc;
-        }, {}),
-      };
-    },
+    resolver: zodResolver(updateProfileSchema),
   });
 
   useEffect(() => {
@@ -205,7 +193,7 @@ const ProfileForm = () => {
           type="submit"
           form="profile-form"
           disabled={isUpdating}
-          className="w-full rounded-none bg-blue-600 px-6 py-5 text-white hover:bg-blue-700 sm:flex-1"
+          className="w-full rounded-none bg-primary px-6 py-5 text-white hover:bg-primary/90 sm:flex-1"
         >
           {isUpdating ? "Saving…" : "Save changes"}
         </Button>

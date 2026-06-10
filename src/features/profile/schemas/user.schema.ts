@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { strongPasswordSchema } from "@/features/auth/schemas/auth.schema";
 
 export const updateProfileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -12,9 +13,7 @@ export type UpdateProfileSchema = z.infer<typeof updateProfileSchema>;
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z
-      .string()
-      .min(8, "New password must be at least 8 characters"),
+    newPassword: strongPasswordSchema,
     confirmPassword: z.string(),
   })
   .refine((d) => d.newPassword === d.confirmPassword, {

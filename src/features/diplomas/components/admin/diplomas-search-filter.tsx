@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, SlidersHorizontal, ChevronsDownUp } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ChevronsDownUp, Search, SlidersHorizontal } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -11,48 +12,87 @@ import {
 } from "@/shared/components/ui/select";
 
 const DiplomasSearchFilter = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(true);
+  const [resetKey, setResetKey] = useState(0);
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [immutable, setImmutable] = useState(
+    searchParams.get("immutable") ?? "all",
+  );
+
+  const applyFilters = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", "1");
+
+    if (search.trim()) params.set("search", search.trim());
+    else params.delete("search");
+
+    if (immutable !== "all") params.set("immutable", immutable);
+    else params.delete("immutable");
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const clearFilters = () => {
+    setSearch("");
+    setImmutable("all");
+    setResetKey((k) => k + 1);
+    router.push(pathname);
+  };
 
   return (
-    <div className="border overflow-hidden">
+    <div className="overflow-hidden border">
       <button
         type="button"
-        onClick={() => setIsOpen((v) => !v)}
-        className="w-full flex items-center justify-between py-3 px-4 bg-blue-500 text-white font-semibold"
+        onClick={() => setIsOpen((current) => !current)}
+        className="flex w-full items-center justify-between bg-primary px-4 py-3 font-semibold text-primary-foreground"
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={16} />
           <span>Search &amp; Filters</span>
         </div>
         <div className="flex items-center gap-1 font-medium">
-
-        <ChevronsDownUp
-          size={16}
-          className={`transition-transform duration-200 ${isOpen ? "" : "rotate-180"}`}
+          <ChevronsDownUp
+            size={16}
+            className={`transition-transform duration-200 ${
+              isOpen ? "" : "rotate-180"
+            }`}
           />
           Hide
-          </div>
+        </div>
       </button>
 
       {isOpen && (
-        <div className="p-4 bg-white space-y-3">
+        <div className="space-y-3 bg-white p-4">
           <div className="relative">
             <Search
               size={15}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
             />
             <input
               type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") applyFilters();
+              }}
               placeholder="Search by title"
-              className="w-full pl-4 pr-4 py-2 border  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border py-2 pl-4 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
-          <Select>
-            <SelectTrigger className="w-1/4">
+          <Select
+            key={`immutable-${resetKey}`}
+            value={immutable}
+            onValueChange={setImmutable}
+          >
+            <SelectTrigger className="w-full sm:w-1/4">
               <SelectValue placeholder="Immutability" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All</SelectItem>
               <SelectItem value="true">Immutable</SelectItem>
               <SelectItem value="false">Mutable</SelectItem>
             </SelectContent>
@@ -61,13 +101,15 @@ const DiplomasSearchFilter = () => {
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900  hover:bg-gray-100"
+              className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              onClick={clearFilters}
             >
               Clear
             </button>
             <button
               type="button"
-              className="px-4 py-2 text-sm bg-gray-200 text-gray-800   hover:bg-gray-300"
+              className="bg-gray-200 px-4 py-2 text-sm text-gray-800 hover:bg-gray-300"
+              onClick={applyFilters}
             >
               Apply
             </button>

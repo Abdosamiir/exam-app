@@ -1,9 +1,10 @@
 "use client";
 
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Field,
@@ -21,24 +22,20 @@ import { useState } from "react";
 
 const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+
+  // Honour the callbackUrl set by the middleware when the user was
+  // redirected from a protected page. Only allow same-origin paths.
+  const callbackUrl = searchParams.get("callbackUrl");
+  const redirectTo =
+    callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")
+      ? callbackUrl
+      : "/diplomas";
 
   const form = useForm<LoginSchema>({
     defaultValues: { username: "", password: "" },
-    resolver: async (values) => {
-      const result = loginSchema.safeParse(values);
-      if (result.success) return { values: result.data, errors: {} };
-      return {
-        values: {},
-        errors: result.error.issues.reduce<
-          Record<string, { message: string; type: string }>
-        >((acc, issue) => {
-          const key = String(issue.path[0]);
-          acc[key] = { message: issue.message, type: issue.code };
-          return acc;
-        }, {}),
-      };
-    },
+    resolver: zodResolver(loginSchema),
   });
 
   const { mutate, isPending, error } = useMutation({
@@ -56,7 +53,7 @@ const LoginForm = () => {
       return result;
     },
     onSuccess: () => {
-      router.push("/diplomas");
+      router.push(redirectTo);
       router.refresh();
     },
   });
@@ -130,7 +127,7 @@ const LoginForm = () => {
       <div className="flex justify-end">
         <Link
           href="/forgot-password"
-          className="text-sm text-blue-600 underline-offset-4 hover:underline"
+          className="text-sm text-primary underline-offset-4 hover:underline"
         >
           Forgot your password?
         </Link>
@@ -144,7 +141,7 @@ const LoginForm = () => {
 
       <Button
         disabled={isPending}
-        className=" capitalize text-white bg-blue-600  rounded-none p-6  mt-8 "
+        className="capitalize rounded-none p-6 mt-8"
       >
         {isPending ? "Logging in…" : "Login"}
       </Button>
@@ -153,7 +150,7 @@ const LoginForm = () => {
         Don’t have an account?{" "}
         <Link
           href="/register"
-          className="text-blue-600 underline-offset-4 hover:underline"
+          className="text-primary underline-offset-4 hover:underline"
         >
           Create yours
         </Link>

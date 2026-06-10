@@ -45,11 +45,12 @@ export interface IAnswerBrief {
 }
 
 // One item in the analytics array from GET /api/submissions/{id}
+// selectedAnswer is null when the question was left unanswered.
 export interface ISubmissionAnalyticsItem {
   questionId: string;
   questionText: string;
-  selectedAnswer: IAnswerBrief;
-  correctAnswer: IAnswerBrief;
+  selectedAnswer: IAnswerBrief | null;
+  correctAnswer: IAnswerBrief | null;
   isCorrect: boolean;
 }
 

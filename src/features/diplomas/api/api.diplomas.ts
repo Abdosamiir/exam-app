@@ -7,11 +7,15 @@ import {
 } from "../types/diploma";
 
 export async function getDiplomas(
+  params?: { page?: number; limit?: number; search?: string },
   token?: string,
-  page: number = 1,
-  limit: number = 6,
 ): Promise<IApiResponse<IDiplomasPayload>> {
-  const res = await fetch(`${API_BASE}/diplomas?page=${page}&limit=${limit}`, {
+  const query = new URLSearchParams();
+  query.set("page", String(params?.page ?? 1));
+  query.set("limit", String(params?.limit ?? 6));
+  if (params?.search) query.set("search", params.search);
+
+  const res = await fetch(`${API_BASE}/diplomas?${query.toString()}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -31,11 +35,10 @@ export async function getDiplomaById(
 
 export async function createDiploma(
   data: ICreateDiplomaFields,
-  token: string,
 ): Promise<IApiResponse<IDiploma>> {
   const res = await fetch(`${API_BASE}/diplomas`, {
     method: "POST",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
@@ -44,34 +47,29 @@ export async function createDiploma(
 export async function updateDiploma(
   id: string,
   data: IUpdateDiplomaFields,
-  token: string,
 ): Promise<IApiResponse<IDiploma>> {
   const res = await fetch(`${API_BASE}/diplomas/${id}`, {
     method: "PUT",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
 }
 
-export async function deleteDiploma(
-  id: string,
-  token: string,
-): Promise<IApiResponse<null>> {
+export async function deleteDiploma(id: string): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/diplomas/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: authHeaders(),
   });
   return res.json();
 }
 
 export async function toggleDiplomaImmutable(
   id: string,
-  token: string,
 ): Promise<IApiResponse<IDiploma>> {
   const res = await fetch(`${API_BASE}/admin/diplomas/${id}/immutable`, {
     method: "PATCH",
-    headers: authHeaders(token),
+    headers: authHeaders(),
   });
   return res.json();
 }

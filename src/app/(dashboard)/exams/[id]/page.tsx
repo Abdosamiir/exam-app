@@ -3,8 +3,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { getExamById } from "@/features/exams/api/api.exams";
 import { getQuestionsByExam } from "@/features/questions/api/api.questions";
 import ExamQuizShell from "@/features/exams/components/exam-quiz-shell";
@@ -16,17 +15,17 @@ export default async function ExamQuestionsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await getServerSession(authOptions);
+  const jwt = await getNextAuthToken();
   const queryClient = new QueryClient();
 
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: ["exams", "detail", id],
-      queryFn: () => getExamById(id, session?.accessToken),
+      queryFn: () => getExamById(id, jwt?.token),
     }),
     queryClient.prefetchQuery({
       queryKey: ["questions", "exam", id],
-      queryFn: () => getQuestionsByExam(id, session?.accessToken),
+      queryFn: () => getQuestionsByExam(id, jwt?.token),
     }),
   ]);
 
@@ -37,7 +36,6 @@ export default async function ExamQuestionsPage({
   ]);
 
   const exam = examData?.status ? examData.payload?.exam : null;
-  // console.log("Exam data:", exam);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

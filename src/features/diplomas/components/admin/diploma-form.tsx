@@ -98,7 +98,7 @@ const DiplomaForm = ({ diploma, mode }: DiplomaFormProps) => {
           Cancel
         </Button>
       </div>
-      <div className=" font-semibold w-full px-4 py-2 bg-blue-600 text-white capitalize">
+      <div className=" font-semibold w-full px-4 py-2 bg-primary text-white capitalize">
         Diploma Information
       </div>
       <Field>

@@ -53,7 +53,7 @@ function CircularTimer({
         />
       </svg>
       <span
-        className={`text-[10px] font-bold tabular-nums ${urgent ? "text-red-500" : "text-blue-600"}`}
+        className={`text-[10px] font-bold tabular-nums ${urgent ? "text-red-500" : "text-primary"}`}
       >
         {formatTime(timeLeft)}
       </span>
@@ -86,14 +86,14 @@ const ExamQuizShell = ({ exam }: { exam: IExamDetail }) => {
           )}
           <div className="flex items-center gap-3 shrink-0">
             <span className="text-sm text-gray-400">
-              Question <span className="font-bold text-blue-600">{currentIndex + 1}</span> of {total}
+              Question <span className="font-bold text-primary">{currentIndex + 1}</span> of {total}
             </span>
             <CircularTimer timeLeft={timeLeft} totalTime={totalTime} />
           </div>
         </div>
         <div className="h-3 w-full overflow-hidden rounded-none bg-gray-50">
           <div
-            className="h-full rounded-none bg-blue-600 transition-all duration-300"
+            className="h-full rounded-none bg-primary transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
