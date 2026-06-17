@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, PenLine, Trash2 } from "lucide-react";
 import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { Button } from "@/shared/components/ui/button";
 import { DashboardBreadcrumb } from "@/app/_components/shared/dashboard-breadcrumb";
 import { getExamById } from "@/features/exams/api/api.exams";
@@ -67,15 +68,16 @@ export default async function AdminQuestionCatchAllPage({
   if (route.mode === "edit" && !hasPermission("update:exams", role)) notFound();
   if (route.mode === "delete" && !hasPermission("delete:exams", role)) notFound();
 
+  const jwt = await getNextAuthToken();
   const queryClient = new QueryClient();
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: ["questions", "detail", route.questionId!],
-      queryFn: () => getQuestionById(route.questionId!, session?.accessToken),
+      queryFn: () => getQuestionById(route.questionId!, jwt?.token),
     }),
     queryClient.prefetchQuery({
       queryKey: ["exams", "detail", examId],
-      queryFn: () => getExamById(examId, session?.accessToken),
+      queryFn: () => getExamById(examId, jwt?.token),
     }),
   ]);
 
@@ -128,7 +130,7 @@ export default async function AdminQuestionCatchAllPage({
                 {hasPermission("update:exams", role) && (
                   <Button
                     asChild
-                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700"
+                    className="rounded-none bg-primary text-white hover:bg-primary/90"
                   >
                     <Link href={`/admin/exams/${examId}/questions/${question.id}/edit`}>
                       <PenLine size={15} /> Edit

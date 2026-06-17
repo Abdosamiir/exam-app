@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Breadcrumb,
@@ -29,11 +28,10 @@ function formatSegment(segment: string): string {
 }
 
 function DiplomaSegmentLabel({ id }: { id: string }) {
-  const { data: session } = useSession();
   const { data } = useQuery({
     queryKey: ["diplomas", id],
-    queryFn: () => getDiplomaById(id, session!.accessToken),
-    enabled: !!id && !!session?.accessToken,
+    queryFn: () => getDiplomaById(id),
+    enabled: !!id,
   });
 
   const title = data?.status
@@ -43,22 +41,20 @@ function DiplomaSegmentLabel({ id }: { id: string }) {
 }
 
 function ExamSegmentLabel({ id }: { id: string }) {
-  const { data: session } = useSession();
   const { data } = useQuery({
     queryKey: ["exams", "detail", id],
-    queryFn: () => getExamById(id, session!.accessToken),
-    enabled: !!id && !!session?.accessToken,
+    queryFn: () => getExamById(id),
+    enabled: !!id,
   });
 
   return data?.status ? (data.payload?.exam?.title ?? id) : id;
 }
 
 function QuestionSegmentLabel({ id }: { id: string }) {
-  const { data: session } = useSession();
   const { data } = useQuery({
     queryKey: ["questions", "detail", id],
-    queryFn: () => getQuestionById(id, session!.accessToken),
-    enabled: !!id && !!session?.accessToken,
+    queryFn: () => getQuestionById(id),
+    enabled: !!id,
   });
 
   return data?.status ? (data.payload?.question?.text ?? id) : id;
@@ -95,11 +91,10 @@ function BreadcrumbTrail({ items }: { items: BreadcrumbEntry[] }) {
 }
 
 function ExamBreadcrumbTrail({ id }: { id: string }) {
-  const { data: session } = useSession();
   const { data } = useQuery({
     queryKey: ["exams", "detail", id],
-    queryFn: () => getExamById(id, session!.accessToken),
-    enabled: !!id && !!session?.accessToken,
+    queryFn: () => getExamById(id),
+    enabled: !!id,
   });
 
   const exam = data?.status ? data.payload?.exam : undefined;
@@ -117,11 +112,10 @@ function ExamBreadcrumbTrail({ id }: { id: string }) {
 }
 
 function SubmissionBreadcrumbTrail({ id }: { id: string }) {
-  const { data: session } = useSession();
   const { data: submissionData } = useQuery({
     queryKey: ["submissions", "detail", id],
-    queryFn: () => getSubmissionById(id, session!.accessToken),
-    enabled: !!id && !!session?.accessToken,
+    queryFn: () => getSubmissionById(id),
+    enabled: !!id,
   });
 
   const submission = submissionData?.status
@@ -131,8 +125,8 @@ function SubmissionBreadcrumbTrail({ id }: { id: string }) {
 
   const { data: examData } = useQuery({
     queryKey: ["exams", "detail", examId],
-    queryFn: () => getExamById(examId!, session!.accessToken),
-    enabled: !!examId && !!session?.accessToken,
+    queryFn: () => getExamById(examId!),
+    enabled: !!examId,
   });
 
   const exam = examData?.status ? examData.payload?.exam : undefined;
@@ -181,7 +175,7 @@ export function DashboardBreadcrumb() {
 
   return (
     <div className="bg-white px-4 py-3 border-b flex items-center gap-3 sm:px-6">
-      <SidebarTrigger className="bg-blue-50" />
+      <SidebarTrigger className="bg-primary/5" />
       <Breadcrumb className="min-w-0 flex-1">
         <BreadcrumbList className="min-w-0 text-sm text-gray-400">
           {isExamDetail ? (

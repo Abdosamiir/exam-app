@@ -10,7 +10,7 @@ export default function UnAuthorized() {
         You are not authorized to access this page.
       </p>
 
-      <Link href="/" className="text-blue-500 hover:text-blue-600 mt-4">
+      <Link href="/" className="text-primary hover:text-primary mt-4">
         Go back to the home page
       </Link>
     </main>

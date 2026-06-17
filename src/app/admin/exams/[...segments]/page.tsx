@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { Button } from "@/shared/components/ui/button";
 import { DashboardBreadcrumb } from "@/app/_components/shared/dashboard-breadcrumb";
 import { getDiplomas } from "@/features/diplomas/api/api.diplomas";
@@ -55,8 +56,8 @@ async function getRouteExam(id: string, token?: string) {
       queryFn: () => getExamById(id, token),
     }),
     queryClient.prefetchQuery({
-      queryKey: ["diplomas", 1, 20],
-      queryFn: () => getDiplomas(token, 1, 20),
+      queryKey: ["diplomas", 1, 20, ""],
+      queryFn: () => getDiplomas({ page: 1, limit: 20 }, token),
     }),
     queryClient.prefetchQuery({
       queryKey: ["questions", "exam", id],
@@ -85,6 +86,7 @@ export default async function AdminExamCatchAllPage({
   const { segments } = await params;
   const route = resolveRoute(segments);
   const session = await getServerSession(authOptions);
+  const jwt = await getNextAuthToken();
   const role = session?.user.role;
 
   if (route.mode === "create") {
@@ -92,8 +94,8 @@ export default async function AdminExamCatchAllPage({
 
     const queryClient = new QueryClient();
     await queryClient.prefetchQuery({
-      queryKey: ["diplomas", 1, 20],
-      queryFn: () => getDiplomas(session?.accessToken, 1, 20),
+      queryKey: ["diplomas", 1, 20, ""],
+      queryFn: () => getDiplomas({ page: 1, limit: 20 }, jwt?.token),
     });
 
     return (
@@ -107,10 +109,7 @@ export default async function AdminExamCatchAllPage({
     );
   }
 
-  const { queryClient, data } = await getRouteExam(
-    route.id!,
-    session?.accessToken,
-  );
+  const { queryClient, data } = await getRouteExam(route.id!, jwt?.token);
   const exam = data?.status ? resolveExam(data.payload) : null;
 
   if (!exam) {
@@ -140,7 +139,7 @@ export default async function AdminExamCatchAllPage({
                   <Button
                     asChild
                     variant="outline"
-                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                    className="rounded-none bg-primary text-white hover:bg-primary/90 hover:text-white"
                   >
                     <Link href={`/admin/exams/${exam.id}/edit`}>
                       {" "}
@@ -173,7 +172,7 @@ export default async function AdminExamCatchAllPage({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-linear-to-br from-blue-50 via-white to-blue-100" />
+                  <div className="h-full w-full bg-linear-to-br from-primary/5 via-white to-primary/10" />
                 )}
               </div>
               <div className="flex flex-col gap-3">
@@ -198,12 +197,12 @@ export default async function AdminExamCatchAllPage({
             </div>
 
             <div className="flex flex-col ">
-              <div className="flex items-center justify-between bg-blue-600 pl-4 text-white ">
+              <div className="flex items-center justify-between bg-primary pl-4 text-white ">
                 <h2 className="text-xl font-semibold">Exam Questions</h2>
                 {hasPermission("create:exams", role) && (
                   <Button
                     asChild
-                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700"
+                    className="rounded-none bg-primary text-white hover:bg-primary/90"
                   >
                     <Link href={`/admin/exams/${exam.id}/questions/add`}>
                       + Add Question
@@ -222,12 +221,12 @@ export default async function AdminExamCatchAllPage({
             <ExamForm exam={exam} mode="edit" />
 
             <div className="flex flex-col ">
-              <div className="flex items-center justify-between  bg-blue-600 pl-4 text-white ">
+              <div className="flex items-center justify-between  bg-primary pl-4 text-white ">
                 <h2 className="text-xl font-semibold">Exam Questions</h2>
                 {hasPermission("create:exams", role) && (
                   <Button
                     asChild
-                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700"
+                    className="rounded-none bg-primary text-white hover:bg-primary/90"
                   >
                     <Link href={`/admin/exams/${exam.id}/questions/add`}>
                       + Add Question

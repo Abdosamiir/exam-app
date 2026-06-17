@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilLine } from "lucide-react";
 
 import { Field, FieldLabel, FieldError } from "@/shared/components/ui/field";
@@ -41,38 +42,12 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
 
   const requestForm = useForm<ChangeEmailSchema>({
     defaultValues: { newEmail: "" },
-    resolver: async (values) => {
-      const result = changeEmailSchema.safeParse(values);
-      if (result.success) return { values: result.data, errors: {} };
-      return {
-        values: {},
-        errors: result.error.issues.reduce<
-          Record<string, { message: string; type: string }>
-        >((acc, issue) => {
-          const key = String(issue.path[0]);
-          acc[key] = { message: issue.message, type: issue.code };
-          return acc;
-        }, {}),
-      };
-    },
+    resolver: zodResolver(changeEmailSchema),
   });
 
   const codeForm = useForm<ConfirmEmailSchema>({
     defaultValues: { code: "" },
-    resolver: async (values) => {
-      const result = confirmEmailSchema.safeParse(values);
-      if (result.success) return { values: result.data, errors: {} };
-      return {
-        values: {},
-        errors: result.error.issues.reduce<
-          Record<string, { message: string; type: string }>
-        >((acc, issue) => {
-          const key = String(issue.path[0]);
-          acc[key] = { message: issue.message, type: issue.code };
-          return acc;
-        }, {}),
-      };
-    },
+    resolver: zodResolver(confirmEmailSchema),
   });
 
   const { mutate: requestEmail, isPending: isRequesting } =
@@ -222,7 +197,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
         >
           {/* stepper */}
           <div className="relative flex items-center justify-between px-2 pt-6 pb-0 sm:px-4">
-            <div className="absolute left-8 right-8 top-[calc(1.5rem+8px)] h-px border-t-2 border-dashed border-blue-200 sm:left-10 sm:right-10" />
+            <div className="absolute left-8 right-8 top-[calc(1.5rem+8px)] h-px border-t-2 border-dashed border-primary/30 sm:left-10 sm:right-10" />
             {[0, 1].map((i) => {
               const active = i === 0 ? true : step === "confirm";
               return (
@@ -230,8 +205,8 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
                   key={i}
                   className={`relative z-10 size-4 rotate-45 border-2 ${
                     active
-                      ? "bg-blue-600 border-blue-600"
-                      : "bg-white border-blue-400"
+                      ? "bg-primary border-primary"
+                      : "bg-white border-primary/60"
                   }`}
                 />
               );
@@ -266,7 +241,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
 
             {step === "request" && (
               <>
-                <p className="text-blue-600 font-semibold mb-5">
+                <p className="text-primary font-semibold mb-5">
                   Enter your new email
                 </p>
                 <form
@@ -304,13 +279,13 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
 
             {step === "confirm" && (
               <>
-                <p className="text-blue-600 font-semibold mb-1">Verify OTP</p>
+                <p className="text-primary font-semibold mb-1">Verify OTP</p>
                 <p className="text-sm text-gray-500 mb-5">
                   Please enter the 6-digits code we have sent to:{" "}
                   <span className="font-medium text-gray-700">{newEmail}.</span>{" "}
                   <button
                     type="button"
-                    className="text-blue-600 underline underline-offset-2"
+                    className="text-primary underline underline-offset-2"
                     onClick={() => {
                       setStep("request");
                       setError(null);
@@ -344,7 +319,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
                         onBlur={() => setFocusedOtpIndex(null)}
                         className={`h-10 w-full min-w-0 text-center text-lg font-semibold border rounded-none outline-none transition-colors sm:size-11 ${
                           focusedOtpIndex === i
-                            ? "border-blue-500"
+                            ? "border-primary"
                             : "border-gray-300"
                         }`}
                       />
@@ -366,7 +341,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
                     <p className="text-center text-sm">
                       <button
                         type="button"
-                        className="text-blue-600 underline underline-offset-2"
+                        className="text-primary underline underline-offset-2"
                         onClick={() => requestForm.handleSubmit(onSendCode)()}
                       >
                         Resend code
@@ -385,7 +360,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
                 type="submit"
                 form="change-email-form"
                 disabled={isRequesting}
-                className="w-full rounded-none bg-blue-600 text-white hover:bg-blue-700 h-12 text-base"
+                className="w-full rounded-none bg-primary text-white hover:bg-primary/90 h-12 text-base"
               >
                 {isRequesting ? (
                   "Sending…"
@@ -401,7 +376,7 @@ const ChangeEmailSection = ({ currentEmail }: Props) => {
                 type="submit"
                 form="change-email-form"
                 disabled={isConfirming}
-                className="w-full rounded-none bg-blue-600 text-white hover:bg-blue-700 h-12 text-base"
+                className="w-full rounded-none bg-primary text-white hover:bg-primary/90 h-12 text-base"
               >
                 {isConfirming ? "Verifying…" : "Verify Code"}
               </Button>

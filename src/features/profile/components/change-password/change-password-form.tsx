@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signOut } from "next-auth/react";
 
 import {
   Field,
@@ -27,20 +29,7 @@ const ChangePasswordForm = () => {
       newPassword: "",
       confirmPassword: "",
     },
-    resolver: async (values) => {
-      const result = changePasswordSchema.safeParse(values);
-      if (result.success) return { values: result.data, errors: {} };
-      return {
-        values: {},
-        errors: result.error.issues.reduce<
-          Record<string, { message: string; type: string }>
-        >((acc, issue) => {
-          const key = String(issue.path[0]);
-          acc[key] = { message: issue.message, type: issue.code };
-          return acc;
-        }, {}),
-      };
-    },
+    resolver: zodResolver(changePasswordSchema),
   });
 
   const { mutate: changePassword, isPending } = useChangePassword();
@@ -49,13 +38,14 @@ const ChangePasswordForm = () => {
     setFormError(null);
     setFormSuccess(null);
     changePassword(data, {
-      onSuccess: (res) => {
+      onSuccess: async (res) => {
         if (!res.status) {
           setFormError(res.message ?? "Failed to change password.");
           return;
         }
-        setFormSuccess("Password changed successfully.");
-        form.reset();
+        // The old session must not survive a password change.
+        setFormSuccess("Password changed successfully. Signing you out…");
+        await signOut({ callbackUrl: "/login" });
       },
       onError: () => setFormError("Something went wrong."),
     });
@@ -144,7 +134,7 @@ const ChangePasswordForm = () => {
           <Button
             type="submit"
             disabled={isPending}
-            className="bg-blue-600 w-full text-white hover:bg-blue-700 rounded-none px-6 py-5 capitalize"
+            className="bg-primary w-full text-white hover:bg-primary/90 rounded-none px-6 py-5 capitalize"
           >
             {isPending ? "Saving…" : "update password"}
           </Button>

@@ -20,11 +20,11 @@ import { ICreateDiplomaFields, IUpdateDiplomaFields } from "../types/diploma";
 const PAGE_SIZE = 6;
 
 export function useInfiniteDiplomas() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   return useInfiniteQuery({
     queryKey: ["diplomas", "infinite"],
     queryFn: ({ pageParam }) =>
-      getDiplomas(session?.accessToken, pageParam as number, PAGE_SIZE),
+      getDiplomas({ page: pageParam as number, limit: PAGE_SIZE }),
     enabled: status === "authenticated",
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
@@ -35,29 +35,25 @@ export function useInfiniteDiplomas() {
   });
 }
 
-export function useDiplomas(page = 1, limit = 20) {
-  const { data: session } = useSession();
+export function useDiplomas(page = 1, limit = 20, search = "") {
   return useQuery({
-    queryKey: ["diplomas", page, limit],
-    queryFn: () => getDiplomas(session?.accessToken, page, limit),
+    queryKey: ["diplomas", page, limit, search],
+    queryFn: () => getDiplomas({ page, limit, search: search || undefined }),
   });
 }
 
 export function useDiploma(id: string) {
-  const { data: session } = useSession();
   return useQuery({
     queryKey: ["diplomas", id],
-    queryFn: () => getDiplomaById(id, session?.accessToken),
+    queryFn: () => getDiplomaById(id),
     enabled: !!id,
   });
 }
 
 export function useCreateDiploma() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: ICreateDiplomaFields) =>
-      createDiploma(data, session!.accessToken),
+    mutationFn: (data: ICreateDiplomaFields) => createDiploma(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diplomas"] });
     },
@@ -65,11 +61,9 @@ export function useCreateDiploma() {
 }
 
 export function useUpdateDiploma(id: string) {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: IUpdateDiplomaFields) =>
-      updateDiploma(id, data, session!.accessToken),
+    mutationFn: (data: IUpdateDiplomaFields) => updateDiploma(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diplomas"] });
       queryClient.invalidateQueries({ queryKey: ["diplomas", id] });
@@ -78,10 +72,9 @@ export function useUpdateDiploma(id: string) {
 }
 
 export function useDeleteDiploma() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => deleteDiploma(id, session!.accessToken),
+    mutationFn: (id: string) => deleteDiploma(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diplomas"] });
     },
@@ -89,10 +82,9 @@ export function useDeleteDiploma() {
 }
 
 export function useToggleDiplomaImmutable() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => toggleDiplomaImmutable(id, session!.accessToken),
+    mutationFn: (id: string) => toggleDiplomaImmutable(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diplomas"] });
     },

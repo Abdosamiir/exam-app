@@ -6,14 +6,12 @@ export interface IUploadPayload {
 
 export async function uploadImage(
   file: File,
-  token: string,
 ): Promise<IApiResponse<IUploadPayload>> {
   const body = new FormData();
   body.append("image", file);
 
   const res = await fetch(`${API_BASE}/upload`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
     body,
   });
   return res.json();

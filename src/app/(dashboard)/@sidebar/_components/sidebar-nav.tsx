@@ -28,8 +28,8 @@ export function SidebarNav() {
               <Link
                 href={href}
                 className={cn(
-                  "w-full  rounded-none text-base! p-4 py-6 mb-2 text-gray-500 hover:text-blue-500! hover:bg-blue-100!",
-                  isActive && "border border-blue-500 text-blue-500! bg-blue-100!"
+                  "w-full  rounded-none text-base! p-4 py-6 mb-2 text-gray-500 hover:text-primary! hover:bg-primary/10!",
+                  isActive && "border border-primary text-primary! bg-primary/10!"
                 )}
               >
                 <Icon className="size-5!" />

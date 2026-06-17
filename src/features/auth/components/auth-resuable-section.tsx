@@ -30,8 +30,8 @@ const AuthReusableSection = () => {
   return (
     <div className="relative hidden lg:flex flex-col justify-center w-1/2 min-h-screen overflow-hidden  select-none">
       {/* ── decorative blur blobs ── */}
-      <div className="pointer-events-none absolute -top-32 -right-32 h-105 w-105 rounded-full bg-blue-200 blur-[120px]" />
-      <div className="pointer-events-none absolute -bottom-24 -left-24 h-95 w-95 rounded-full bg-blue-200 blur-[100px]" />
+      <div className="pointer-events-none absolute -top-32 -right-32 h-105 w-105 rounded-full bg-primary/20 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-24 -left-24 h-95 w-95 rounded-full bg-primary/20 blur-[100px]" />
 
       {/* ── content ── */}
       <div className="relative z-10 flex items-start flex-col container mx-auto w-2/3 gap-30 h-full text-black">

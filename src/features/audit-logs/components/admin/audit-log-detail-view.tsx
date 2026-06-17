@@ -22,7 +22,7 @@ const ACTION_COLORS: Record<string, string> = {
 const ROLE_COLORS: Record<string, string> = {
   SUPER_ADMIN: "text-red-500",
   ADMIN: "text-purple-600",
-  MANAGER: "text-blue-600",
+  MANAGER: "text-primary",
   USER: "text-gray-600",
 };
 

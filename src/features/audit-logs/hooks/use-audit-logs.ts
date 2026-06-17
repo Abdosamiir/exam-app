@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteAllAuditLogs,
@@ -10,27 +9,24 @@ import {
 } from "../api/api.audit-logs";
 
 export function useAuditLogs(page: number = 1, limit: number = 20) {
-  const { data: session } = useSession();
   return useQuery({
     queryKey: ["audit-logs", page, limit],
-    queryFn: () => getAuditLogs(session?.accessToken, page, limit),
+    queryFn: () => getAuditLogs({ page, limit }),
   });
 }
 
 export function useAuditLog(id: string) {
-  const { data: session } = useSession();
   return useQuery({
     queryKey: ["audit-logs", id],
-    queryFn: () => getAuditLogById(id, session?.accessToken),
+    queryFn: () => getAuditLogById(id),
     enabled: !!id,
   });
 }
 
 export function useDeleteAuditLog() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => deleteAuditLog(id, session!.accessToken),
+    mutationFn: (id: string) => deleteAuditLog(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
@@ -38,10 +34,9 @@ export function useDeleteAuditLog() {
 }
 
 export function useDeleteAllAuditLogs() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => deleteAllAuditLogs(session!.accessToken),
+    mutationFn: () => deleteAllAuditLogs(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },

@@ -1,6 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { getExams } from "@/features/exams/api/api.exams";
 import { getDiplomas } from "@/features/diplomas/api/api.diplomas";
 import ExamsAdminTable from "@/features/exams/components/admin/exams-admin-table";
@@ -18,16 +19,17 @@ export default async function AdminExamsPage({
   const { page: pageParam } = await searchParams;
   const page = Number(pageParam ?? "1");
   const session = await getServerSession(authOptions);
+  const jwt = await getNextAuthToken();
   const queryClient = new QueryClient();
 
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: ["exams", "all", page, 20],
-      queryFn: () => getExams({ page, limit: 20 }, session?.accessToken),
+      queryFn: () => getExams({ page, limit: 20 }, jwt?.token),
     }),
     queryClient.prefetchQuery({
-      queryKey: ["diplomas", 1, 20],
-      queryFn: () => getDiplomas(session?.accessToken, 1, 20),
+      queryKey: ["diplomas", 1, 100, ""],
+      queryFn: () => getDiplomas({ page: 1, limit: 100 }, jwt?.token),
     }),
   ]);
 

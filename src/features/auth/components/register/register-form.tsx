@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -12,11 +14,13 @@ import {
   FieldLabel,
 } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
-import { registerSchema, RegisterSchema } from "../../schemas/auth.schema";
+import {
+  registerFormSchema,
+  RegisterFormSchema,
+  RegisterSchema,
+} from "../../schemas/auth.schema";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-
-type RegisterFormFields = RegisterSchema & { code: string };
 
 const OTP_LENGTH = 6;
 
@@ -95,7 +99,7 @@ const OtpInput = ({
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
           onClick={(e) => (e.target as HTMLInputElement).select()}
-          className="h-12 w-12  border border-gray-300 text-center text-lg font-medium focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="h-12 w-12  border border-gray-300 text-center text-lg font-medium focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
       ))}
     </div>
@@ -120,8 +124,8 @@ const StepProgress = ({ current }: { current: number }) => (
               isActive ? "h-5 w-5" : "h-3.5 w-3.5"
             } ${
               isDone || isActive
-                ? "bg-blue-600"
-                : "border-2 border-blue-300 bg-white"
+                ? "bg-primary"
+                : "border-2 border-primary/40 bg-white"
             }`}
           >
             {isActive && <span className="block h-2 w-2 bg-white" />}
@@ -132,8 +136,8 @@ const StepProgress = ({ current }: { current: number }) => (
             <div
               className={`flex-1 ${
                 isDone
-                  ? "h-0.5 bg-blue-600"
-                  : "border-t-2 border-dashed border-blue-300"
+                  ? "h-0.5 bg-primary"
+                  : "border-t-2 border-dashed border-primary/40"
               }`}
             />
           )}
@@ -144,6 +148,7 @@ const StepProgress = ({ current }: { current: number }) => (
 );
 
 const RegisterForm = () => {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(0);
@@ -156,7 +161,8 @@ const RegisterForm = () => {
     return () => clearTimeout(id);
   }, [countdown]);
 
-  const form = useForm<RegisterFormFields>({
+  const form = useForm<RegisterFormSchema>({
+    resolver: zodResolver(registerFormSchema),
     defaultValues: {
       email: "",
       code: "",
@@ -217,23 +223,12 @@ const RegisterForm = () => {
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterSchema) => {
-      const parsed = registerSchema.safeParse(data);
-      if (!parsed.success) {
-        throw new Error(
-          parsed.error.issues[0]?.message || "Invalid form data.",
-        );
-      }
-
-      if (parsed.data.password !== parsed.data.confirmPassword) {
-        throw new Error("Password and confirm password must match.");
-      }
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(parsed.data),
+          body: JSON.stringify(data),
         },
       );
 
@@ -244,9 +239,9 @@ const RegisterForm = () => {
       return payload;
     },
     onSuccess: () => {
-      setStep(1);
       setFormError(null);
-      form.reset();
+      // Account created — take the user to login instead of resetting to step 1.
+      router.push("/login");
     },
   });
 
@@ -345,13 +340,6 @@ const RegisterForm = () => {
           <Controller
             name="email"
             control={form.control}
-            rules={{
-              required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email address",
-              },
-            }}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Email</FieldLabel>
@@ -376,18 +364,11 @@ const RegisterForm = () => {
           <Controller
             name="code"
             control={form.control}
-            rules={{
-              required: "Verification code is required",
-              minLength: {
-                value: 4,
-                message: "Verification code is too short",
-              },
-            }}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel
                   htmlFor={field.name}
-                  className="text-blue-600 font-bold text-2xl"
+                  className="text-primary font-bold text-2xl"
                 >
                   Verify OTP
                 </FieldLabel>
@@ -397,7 +378,7 @@ const RegisterForm = () => {
                   <button
                     type="button"
                     onClick={goBackToEmail}
-                    className="text-blue-600 hover:underline underline-offset-4"
+                    className="text-primary hover:underline underline-offset-4"
                   >
                     Edit
                   </button>
@@ -407,7 +388,7 @@ const RegisterForm = () => {
                   {countdown > 0 ? (
                     <span>
                       You can request another code in:{" "}
-                      <span className="font-semibold text-blue-600 tabular-nums">
+                      <span className="font-semibold text-primary tabular-nums">
                         {countdown}s
                       </span>
                     </span>
@@ -429,7 +410,7 @@ const RegisterForm = () => {
                           );
                         }
                       }}
-                      className="text-blue-600 hover:underline underline-offset-4 disabled:opacity-50"
+                      className="text-primary hover:underline underline-offset-4 disabled:opacity-50"
                     >
                       {sendOtpMutation.isPending ? "Sending…" : "Resend code"}
                     </button>
@@ -449,7 +430,6 @@ const RegisterForm = () => {
               <Controller
                 name="firstName"
                 control={form.control}
-                rules={{ required: "First name is required" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
@@ -470,7 +450,6 @@ const RegisterForm = () => {
               <Controller
                 name="lastName"
                 control={form.control}
-                rules={{ required: "Last name is required" }}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
@@ -492,7 +471,6 @@ const RegisterForm = () => {
             <Controller
               name="username"
               control={form.control}
-              rules={{ required: "Username is required" }}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>Username</FieldLabel>
@@ -513,7 +491,6 @@ const RegisterForm = () => {
             <Controller
               name="phone"
               control={form.control}
-              rules={{ required: "Phone is required" }}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>Phone</FieldLabel>
@@ -535,19 +512,12 @@ const RegisterForm = () => {
 
         {step === 4 && (
           <>
-            <h1 className="text-2xl font-bold text-blue-600 ">
+            <h1 className="text-2xl font-bold text-primary ">
               Create strong Password
             </h1>
             <Controller
               name="password"
               control={form.control}
-              rules={{
-                required: "Password is required",
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-              }}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>Password</FieldLabel>
@@ -585,12 +555,6 @@ const RegisterForm = () => {
             <Controller
               name="confirmPassword"
               control={form.control}
-              rules={{
-                required: "Confirm password is required",
-                validate: (value) =>
-                  value === form.getValues("password") ||
-                  "Password and confirm password must match.",
-              }}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
@@ -656,7 +620,7 @@ const RegisterForm = () => {
               type="button"
               disabled={sendOtpMutation.isPending}
               onClick={nextFromEmail}
-              className="capitalize  bg-blue-50 border-blue-500 border text-gray-800 w-full hover:text-white  rounded-none p-5"
+              className="capitalize  bg-primary/5 border-primary border text-gray-800 w-full hover:text-white  rounded-none p-5"
             >
               {sendOtpMutation.isPending ? "Sending..." : "Next"}
             </Button>
@@ -664,7 +628,7 @@ const RegisterForm = () => {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-blue-600 underline-offset-4 hover:underline"
+                className="text-primary underline-offset-4 hover:underline"
               >
                 Login
               </Link>
@@ -677,7 +641,7 @@ const RegisterForm = () => {
             type="button"
             disabled={verifyOtpMutation.isPending}
             onClick={nextFromCode}
-            className="capitalize text-blue-600 hover:text-white w-full bg-blue-50 rounded-none p-5"
+            className="capitalize text-primary hover:text-white w-full bg-primary/5 rounded-none p-5"
           >
             {verifyOtpMutation.isPending ? "Verifying..." : "Verify Code"}
           </Button>
@@ -687,7 +651,7 @@ const RegisterForm = () => {
           <Button
             type="button"
             onClick={nextFromProfile}
-            className="capitalize text-blue-600 hover:text-white w-full bg-blue-50 rounded-none p-5"
+            className="capitalize text-primary hover:text-white w-full bg-primary/5 rounded-none p-5"
           >
             Next
           </Button>
@@ -698,7 +662,7 @@ const RegisterForm = () => {
             type="button"
             disabled={registerMutation.isPending}
             onClick={submitRegister}
-            className="capitalize text-white w-full bg-blue-600 rounded-none p-5"
+            className="capitalize text-white w-full bg-primary rounded-none p-5"
           >
             {registerMutation.isPending ? "Creating..." : "Create Account"}
           </Button>

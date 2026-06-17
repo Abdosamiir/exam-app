@@ -1,18 +1,17 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { getDiplomas } from "@/features/diplomas/api/api.diplomas";
 import DiplomasList from "@/features/diplomas/components/diplomas-list";
 
 export default async function DiplomasPage() {
-  const session = await getServerSession(authOptions);
+  const jwt = await getNextAuthToken();
   const queryClient = new QueryClient();
 
-  if (session?.accessToken) {
+  if (jwt?.token) {
     await queryClient.prefetchInfiniteQuery({
       queryKey: ["diplomas", "infinite"],
       queryFn: ({ pageParam }) =>
-        getDiplomas(session.accessToken, pageParam as number, 6),
+        getDiplomas({ page: pageParam as number, limit: 6 }, jwt.token),
       initialPageParam: 1,
     });
   }
@@ -20,7 +19,6 @@ export default async function DiplomasPage() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="flex flex-col gap-6">
-        {/* <h1 className="text-2xl font-bold">Diplomas</h1> */}
         <DiplomasList />
       </div>
     </HydrationBoundary>

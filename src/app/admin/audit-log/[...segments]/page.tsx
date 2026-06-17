@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { DashboardBreadcrumb } from "@/app/_components/shared/dashboard-breadcrumb";
 import { getAuditLogById } from "@/features/audit-logs/api/api.audit-logs";
 import AuditLogDetailView from "@/features/audit-logs/components/admin/audit-log-detail-view";
@@ -68,10 +69,8 @@ export default async function AdminAuditLogCatchAllPage({
 
   if (!hasPermission("view:audit-logs", role)) notFound();
 
-  const { queryClient, data } = await getRouteAuditLog(
-    route.id,
-    session?.accessToken,
-  );
+  const jwt = await getNextAuthToken();
+  const { queryClient, data } = await getRouteAuditLog(route.id, jwt?.token);
   const log = data?.status ? resolveAuditLog(data.payload) : null;
 
   if (!log) {

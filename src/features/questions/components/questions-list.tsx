@@ -20,7 +20,7 @@ const QuestionItem = ({
   return (
     <div className="rounded-lg border bg-white p-5 flex flex-col gap-3 shadow-sm">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
+        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
           {index + 1}
         </span>
         <p className="text-sm font-medium text-gray-800">{question.text}</p>
@@ -28,7 +28,7 @@ const QuestionItem = ({
 
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="self-start text-xs text-blue-600 hover:underline underline-offset-4"
+        className="self-start text-xs text-primary hover:underline underline-offset-4"
       >
         {expanded ? "Hide answers" : `Show answers (${question.answers.length})`}
       </button>

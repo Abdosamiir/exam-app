@@ -5,7 +5,20 @@
       "Bash(node -e \"const pkg = require\\('./node_modules/radix-ui/package.json'\\); console.log\\(Object.keys\\(pkg.exports || {}\\).filter\\(k => k.includes\\('dialog'\\) || k.includes\\('alert'\\)\\)\\)\")",
       "Bash(node -e \"const pkg = require\\('./node_modules/radix-ui/package.json'\\); const keys = Object.keys\\(pkg.exports || {}\\); console.log\\(keys.slice\\(0, 50\\).join\\('\\\\n'\\)\\)\")",
       "Bash(node -e \"const pkg = require\\('./node_modules/@radix-ui/react-one-time-password-field/package.json'\\); console.log\\(pkg.version, JSON.stringify\\(Object.keys\\(pkg.exports || {}\\)\\)\\)\")",
-      "Bash(npx shadcn@latest add select --yes)"
+      "Bash(npx shadcn@latest add select --yes)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40)",
+      "PowerShell(npm install *)",
+      "PowerShell(git rm *)",
+      "Bash(xargs -0 sed -i -E ' *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 50)",
+      "PowerShell(npx eslint src --ext .ts,.tsx 2>&1 | Select-Object -Last 80)",
+      "Bash(sed -n '1,12p' src/features/exams/components/admin/exams-admin-table.tsx)",
+      "Bash(sed -n '1,6p' src/features/exams/components/exam-card.tsx)",
+      "Bash(sed -n '1,5p' src/features/submissions/components/results-pie-chart.tsx)",
+      "Bash(sed -n '1,4p' src/shared/components/ui/breadcrumb.tsx)",
+      "PowerShell(npx eslint src 2>&1 | Select-Object -Last 8)",
+      "PowerShell(npm run *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 10; npx eslint src 2>&1 | Select-Object -Last 5; Write-Output \"DONE\")"
     ]
   }
 }

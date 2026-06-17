@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/shared/lib/auth";
+import { getNextAuthToken } from "@/shared/lib/utils/auth.util";
 import { Button } from "@/shared/components/ui/button";
 import { DashboardBreadcrumb } from "@/app/_components/shared/dashboard-breadcrumb";
 import { getDiplomaById } from "@/features/diplomas/api/api.diplomas";
@@ -19,7 +20,7 @@ import {
   IDiplomaDetailPayload,
 } from "@/features/diplomas/types/diploma";
 import { hasPermission } from "@/shared/lib/utils/rbac.util";
-import { Pencil, PenLine, Trash, Trash2 } from "lucide-react";
+import { PenLine, Trash2 } from "lucide-react";
 
 type DiplomaRouteMode = "create" | "view" | "edit" | "delete";
 
@@ -78,6 +79,7 @@ export default async function AdminDiplomaCatchAllPage({
   const { segments } = await params;
   const route = resolveRoute(segments);
   const session = await getServerSession(authOptions);
+  const jwt = await getNextAuthToken();
   const role = session?.user.role;
 
   if (route.mode === "create") {
@@ -94,10 +96,7 @@ export default async function AdminDiplomaCatchAllPage({
     );
   }
 
-  const { queryClient, data } = await getRouteDiploma(
-    route.id!,
-    session?.accessToken,
-  );
+  const { queryClient, data } = await getRouteDiploma(route.id!, jwt?.token);
 
   const diploma = data?.status ? resolveDiploma(data.payload) : null;
 
@@ -129,7 +128,7 @@ export default async function AdminDiplomaCatchAllPage({
                   <Button
                     asChild
                     variant="outline"
-                    className="rounded-none bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                    className="rounded-none bg-primary text-white hover:bg-primary/90 hover:text-white"
                   >
                     <Link href={`/admin/diplomas/${diploma.id}/edit`}>
                       <PenLine size={14} className="text-white" />
@@ -163,7 +162,7 @@ export default async function AdminDiplomaCatchAllPage({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-linear-to-br from-blue-50 via-white to-blue-100" />
+                  <div className="h-full w-full bg-linear-to-br from-primary/5 via-white to-primary/10" />
                 )}
               </div>
               <div className="flex flex-col gap-3">

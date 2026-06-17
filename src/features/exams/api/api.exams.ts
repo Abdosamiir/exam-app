@@ -11,12 +11,12 @@ export async function getExams(
   params?: { diplomaId?: string; page?: number; limit?: number },
   token?: string,
 ): Promise<IApiResponse<IExamsPayload>> {
-  const url = new URL(`${API_BASE}/exams`);
-  if (params?.diplomaId) url.searchParams.set("diplomaId", params.diplomaId);
-  if (params?.page) url.searchParams.set("page", String(params.page));
-  if (params?.limit) url.searchParams.set("limit", String(params.limit));
+  const query = new URLSearchParams();
+  if (params?.diplomaId) query.set("diplomaId", params.diplomaId);
+  if (params?.page) query.set("page", String(params.page));
+  if (params?.limit) query.set("limit", String(params.limit));
 
-  const res = await fetch(url.toString(), {
+  const res = await fetch(`${API_BASE}/exams?${query.toString()}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
@@ -25,11 +25,10 @@ export async function getExams(
 
 export async function createExam(
   data: ICreateExamFields,
-  token: string,
 ): Promise<IApiResponse<IExam>> {
   const res = await fetch(`${API_BASE}/exams`, {
     method: "POST",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
@@ -38,23 +37,19 @@ export async function createExam(
 export async function updateExam(
   id: string,
   data: IUpdateExamFields,
-  token: string,
 ): Promise<IApiResponse<IExam>> {
   const res = await fetch(`${API_BASE}/exams/${id}`, {
     method: "PUT",
-    headers: authHeaders(token),
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
 }
 
-export async function deleteExam(
-  id: string,
-  token: string,
-): Promise<IApiResponse<null>> {
+export async function deleteExam(id: string): Promise<IApiResponse<null>> {
   const res = await fetch(`${API_BASE}/exams/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: authHeaders(),
   });
   return res.json();
 }
@@ -72,11 +67,10 @@ export async function getExamById(
 
 export async function toggleExamImmutable(
   id: string,
-  token: string,
 ): Promise<IApiResponse<IExam>> {
   const res = await fetch(`${API_BASE}/admin/exams/${id}/immutable`, {
     method: "PATCH",
-    headers: authHeaders(token),
+    headers: authHeaders(),
   });
   return res.json();
 }
